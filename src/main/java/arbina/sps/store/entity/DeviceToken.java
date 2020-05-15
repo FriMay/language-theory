@@ -26,7 +26,7 @@ public class DeviceToken implements CursoredListDTO.Entity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private String id;
+    private Long id;
 
     @Column(name = "username")
     private String username;
@@ -42,6 +42,6 @@ public class DeviceToken implements CursoredListDTO.Entity {
 
     @Override
     public String getCursor() {
-        return id;
+        return id.toString();
     }
 }

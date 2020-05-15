@@ -18,13 +18,21 @@ import lombok.NoArgsConstructor;
 public class TokenDTO {
 
     @JsonProperty("id")
-    public String id;
+    private Long id;
+
+    @JsonProperty("device_token")
+    private String token;
+
+    @JsonProperty("token_type")
+    private String tokenType;
 
     public static TokenDTO of(DeviceToken ent) {
 
         return TokenDTO
                 .builder()
                 .id(ent.getId())
+                .token(ent.getToken())
+                .tokenType(ent.getTokenType())
                 .build();
     }
 }

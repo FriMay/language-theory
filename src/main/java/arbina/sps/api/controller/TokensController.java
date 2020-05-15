@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PutMapping;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.transaction.Transactional;
 import java.security.Principal;
@@ -31,7 +32,7 @@ public class TokensController {
             authorizations = { @Authorization(value = SwaggerConfig.oAuth2) })
     @PutMapping("/api/tokens")
     @Secured({ Authority.USER, Authority.OBSERVER })
-    public ResponseEntity<AckDTO> putToken(Principal principal,
+    public ResponseEntity<AckDTO> putToken(@ApiIgnore Principal principal,
                                            String token,
                                            DeviceTokenType tokenType) {
 
@@ -44,6 +45,6 @@ public class TokensController {
 
         tokenRepository.saveAndFlush(deviceToken);
 
-        return ResponseEntity.ok(new AckDTO());
+        return ResponseEntity.ok(AckDTO.of(true));
     }
 }

@@ -2,6 +2,6 @@ package arbina.sps.store;
 
 public enum DeviceTokenType {
 
-    IOS, IOS_VOID, FCM;
+    IOS, IOS_VOIP, FCM;
 
 }
