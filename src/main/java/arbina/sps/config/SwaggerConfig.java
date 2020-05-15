@@ -61,8 +61,8 @@ public class SwaggerConfig {
 
     private ApiInfo metaData() {
         return new ApiInfoBuilder()
-                .title("Arbina API Service")
-                .description("Arbina REST API template.")
+                .title("Arbina SPS")
+                .description("Arbina REST API of Simple Push Service.")
                 .version("1.0.0")
                 .contact(new Contact("Alexey Grigorkin", "https://arbina.com", "dev@arbina.com"))
                 .build();

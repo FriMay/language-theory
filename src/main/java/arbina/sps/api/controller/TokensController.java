@@ -1,6 +1,7 @@
 package arbina.sps.api.controller;
 
 import arbina.infra.dto.AckDTO;
+import arbina.infra.exceptions.BadRequestException;
 import arbina.infra.services.id.Authority;
 import arbina.sps.config.SwaggerConfig;
 import arbina.sps.store.DeviceTokenType;
@@ -17,6 +18,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.transaction.Transactional;
 import java.security.Principal;
 import java.util.Date;
+import java.util.Optional;
 
 @Controller
 @Transactional
@@ -36,15 +38,26 @@ public class TokensController {
                                            String token,
                                            DeviceTokenType tokenType) {
 
-        DeviceToken deviceToken = DeviceToken.builder()
-                .username(principal.getName())
-                .token(token)
-                .tokenType(tokenType.toString())
-                .createdAt(new Date())
-                .build();
+        if (Optional.ofNullable(token).orElse("").length() == 0) {
+            throw new BadRequestException("Wrong token");
+        }
 
-        tokenRepository.saveAndFlush(deviceToken);
+        boolean ack = false;
 
-        return ResponseEntity.ok(AckDTO.of(true));
+        if (!tokenRepository.isTokenExists(principal.getName(), token, tokenType.toString())) {
+
+            DeviceToken deviceToken = DeviceToken.builder()
+                    .username(principal.getName())
+                    .token(token)
+                    .tokenType(tokenType.toString())
+                    .createdAt(new Date())
+                    .build();
+
+            tokenRepository.saveAndFlush(deviceToken);
+
+            ack = true;
+        }
+
+        return ResponseEntity.ok(AckDTO.of(ack));
     }
 }
