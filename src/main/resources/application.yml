@@ -1,0 +1,34 @@
+---
+
+  logging:
+    level:
+      org.springframework: INFO
+
+  server:
+    port: 8075
+
+  spring:
+    datasource:
+      driver-class-name: org.postgresql.Driver
+      url: jdbc:postgresql://ml-supply-1.sandbox/sandbox-keep-template
+      username: sandbox-keep-template
+      password: lhPaJOFM
+    jpa:
+      show-sql: false
+      hibernate:
+        ddl-auto: update
+    jackson:
+      serialization:
+        indentOutput: true
+    security:
+      oauth2:
+        resource:
+          jwk:
+            keySetUri: https://sso.arbina.com/.well-known/jwks.json
+
+  arbina:
+    swagger:
+      oauth:
+        client-id: clientNoSecret
+        client-secret:
+        server: https://sso.arbina.com

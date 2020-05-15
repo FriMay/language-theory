@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-configuration-processor/2.2.7.RELEASE/d5f307edd4b5b7c2895a1c73542565cfbb6dec7f/spring-boot-configuration-processor-2.2.7.RELEASE.jar" />
+        </processorPath>
+        <module name="app-template.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="arbina-signal-api.main" target="1.8" />
+      <module name="arbina-signal-api.test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

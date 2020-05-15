@@ -1,0 +1,22 @@
+---
+
+  logging:
+    level:
+      org.springframework: INFO
+
+  arbina:
+    security:
+      stateless: false
+
+  spring:
+    datasource:
+      driverClassName: org.h2.Driver
+      url: jdbc:h2:mem:test-db;DB_CLOSE_DELAY=-1
+      initializationMode: always
+    jpa:
+      hibernate:
+        ddlAuto: create-drop
+      show-sql: false
+      properties:
+        hibernate:
+          show_sql: false
