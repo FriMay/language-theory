@@ -1,5 +1,6 @@
-package arbina.app.template.api.controller;
+package arbina.sps.api.controller;
 
+import arbina.infra.dto.ErrorDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
@@ -8,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
-import arbina.app.template.api.dto.ErrorDTO;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Map;

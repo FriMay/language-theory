@@ -1,4 +1,4 @@
-package arbina.app.template.config;
+package arbina.sps.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

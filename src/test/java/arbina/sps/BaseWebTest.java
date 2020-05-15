@@ -1,7 +1,7 @@
-package arbina.app.template;
+package arbina.sps;
 
-import arbina.app.template.config.CorsConfig;
-import arbina.app.template.config.ResourceServerConfig;
+import arbina.sps.config.CorsConfig;
+import arbina.sps.config.ResourceServerConfig;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;

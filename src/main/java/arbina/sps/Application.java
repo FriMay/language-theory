@@ -1,4 +1,4 @@
-package arbina.app.template;
+package arbina.sps;
 
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

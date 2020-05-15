@@ -5,14 +5,14 @@
       org.springframework: INFO
 
   server:
-    port: 8075
+    port: 9080
 
   spring:
     datasource:
       driver-class-name: org.postgresql.Driver
-      url: jdbc:postgresql://ml-supply-1.sandbox/sandbox-keep-template
-      username: sandbox-keep-template
-      password: lhPaJOFM
+      url: jdbc:postgresql://ml-supply-1.sandbox/arbina-sps
+      username: arbina-sps
+      password: dosqYGnd
     jpa:
       show-sql: false
       hibernate:

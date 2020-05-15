@@ -5,7 +5,7 @@ set -e
 gradle clean
 gradle bootJar
 
-name=sandbox-api-app
+name=arbina-sps-api
 
 region=eu-west-1
 

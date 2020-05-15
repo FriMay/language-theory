@@ -1,5 +1,6 @@
-package arbina.app.template.config;
+package arbina.sps.config;
 
+import arbina.infra.services.id.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,9 +23,6 @@ import org.springframework.security.oauth2.provider.token.store.jwk.JwkTokenStor
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-    public static final String RESOURCE_ID = "arbina:app-template";
-    public static final String OBSERVER = "OBSERVER";
-
     /**
      * Use @WithMockUser (with @SpringBootTest) inside an oAuth2 Resource Server Application.
      *
@@ -35,7 +33,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(ResourceServerSecurityConfigurer security) {
-        security.resourceId(RESOURCE_ID);
+        security.resourceId(Resource.SPS);
         security.stateless(stateless);
     }
 

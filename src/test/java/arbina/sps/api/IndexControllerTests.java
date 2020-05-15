@@ -1,8 +1,8 @@
-package arbina.app.template.api;
+package arbina.sps.api;
 
-import arbina.app.template.BaseWebTest;
-import arbina.app.template.api.controller.IndexController;
-import arbina.app.template.config.ResourceServerConfig;
+import arbina.infra.services.id.Authority;
+import arbina.sps.BaseWebTest;
+import arbina.sps.api.controller.TokensController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -16,7 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(IndexController.class)
+@WebMvcTest(TokensController.class)
 public class IndexControllerTests extends BaseWebTest {
 
     @Autowired
@@ -32,7 +32,7 @@ public class IndexControllerTests extends BaseWebTest {
     }
 
     @Test
-    @WithMockUser(authorities = ResourceServerConfig.OBSERVER)
+    @WithMockUser(authorities = Authority.OBSERVER)
     public void shouldBeOK() throws Exception {
         mvc.perform(get("/api"))
                 .andExpect(status().isOk());

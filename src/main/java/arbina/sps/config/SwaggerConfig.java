@@ -1,5 +1,6 @@
-package arbina.app.template.config;
+package arbina.sps.config;
 
+import arbina.infra.services.id.Resource;
 import com.google.common.base.Predicates;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -41,10 +42,10 @@ public class SwaggerConfig {
     public Docket api() {
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName(ResourceServerConfig.RESOURCE_ID)
+                .groupName(Resource.SPS)
                 .select()
                 .apis(Predicates.or(
-                        RequestHandlerSelectors.basePackage("arbina.app.template.api")
+                        RequestHandlerSelectors.basePackage("arbina.sps.api")
                 ))
                 .paths(PathSelectors.any())
                 .build()

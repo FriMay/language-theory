@@ -1,4 +1,4 @@
-package arbina.app.template.store;
+package arbina.sps.store;
 
 public enum AclRight {
 
