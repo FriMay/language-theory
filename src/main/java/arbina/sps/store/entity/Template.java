@@ -42,7 +42,7 @@ public class Template implements CursoredListDTO.Entity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "template_id", referencedColumnName = "id")
-    private List<Localization> templateLocalizations;
+    private List<Localization> localizations;
 
     @Override
     public String getCursor() {
