@@ -30,14 +30,14 @@ public class LocalizationsTest extends BaseWebTest {
 
     private static boolean isDataSetup = false;
 
-    private static Long firstTemplateLocalizationId;
+    private static Long firstLocalizationId;
 
     private static Long firstTemplateId;
 
     private final Logger logger = LogManager.getLogger();
 
     @Autowired
-    private LocalizationsRepository templateLocalizationRepository;
+    private LocalizationsRepository localizationsRepository;
 
     @Autowired
     private TemplatesRepository templatesRepository;
@@ -63,7 +63,7 @@ public class LocalizationsTest extends BaseWebTest {
 
         templatesRepository.saveAndFlush(secondTemplate);
 
-        Localization firstTemplateLocalization = Localization.builder()
+        Localization firstLocalization = Localization.builder()
                 .title("Hello Michael!")
                 .subtitle("Hello message.")
                 .body("Our app has been updated, come soon!")
@@ -71,7 +71,7 @@ public class LocalizationsTest extends BaseWebTest {
                 .localeIso("ru")
                 .build();
 
-        Localization secondTemplateLocalization = Localization.builder()
+        Localization secondeLocalization = Localization.builder()
                 .title("Hello Michael!")
                 .subtitle("Hello message.")
                 .body("Our app has been updated, come soon!")
@@ -79,8 +79,8 @@ public class LocalizationsTest extends BaseWebTest {
                 .localeIso("en")
                 .build();
 
-        firstTemplateLocalizationId = templateLocalizationRepository.saveAndFlush(firstTemplateLocalization).getId();
-        templateLocalizationRepository.saveAndFlush(secondTemplateLocalization);
+        firstLocalizationId = localizationsRepository.saveAndFlush(firstLocalization).getId();
+        localizationsRepository.saveAndFlush(secondeLocalization);
     }
 
 
@@ -144,7 +144,7 @@ public class LocalizationsTest extends BaseWebTest {
         jsonObject.put("template_id", firstTemplateId);
         jsonObject.put("locale_iso", "ru");
 
-        mvc.perform(put("/api/templates/localizations/{localizationId}", firstTemplateLocalizationId)
+        mvc.perform(put("/api/templates/localizations/{localizationId}", firstLocalizationId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObject.toString()))
                 .andExpect(status().isOk());
@@ -160,7 +160,7 @@ public class LocalizationsTest extends BaseWebTest {
         jsonObject.put("template_id", firstTemplateId);
         jsonObject.put("locale_iso", "eu");
 
-        mvc.perform(put("/api/templates/localizations/{localizationId}", firstTemplateLocalizationId)
+        mvc.perform(put("/api/templates/localizations/{localizationId}", firstLocalizationId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObject.toString()))
                 .andExpect(status().isBadRequest());

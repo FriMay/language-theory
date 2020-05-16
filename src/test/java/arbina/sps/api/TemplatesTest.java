@@ -38,7 +38,7 @@ public class TemplatesTest extends BaseWebTest {
     private final Logger logger = LogManager.getLogger();
 
     @Autowired
-    private LocalizationsRepository templateLocalizationRepository;
+    private LocalizationsRepository localizationsRepository;
 
     @Autowired
     private TemplatesRepository templatesRepository;
@@ -62,7 +62,7 @@ public class TemplatesTest extends BaseWebTest {
 
         secondTemplateId = templatesRepository.saveAndFlush(secondTemplate).getId();
 
-        Localization firstTemplateLocalization = Localization.builder()
+        Localization firstLocalization = Localization.builder()
                 .title("Hello Michael!")
                 .subtitle("Hello message.")
                 .body("Our app has been updated, come soon!")
@@ -70,7 +70,7 @@ public class TemplatesTest extends BaseWebTest {
                 .localeIso("ru")
                 .build();
 
-        Localization secondTemplateLocalization = Localization.builder()
+        Localization secondLocalization = Localization.builder()
                 .title("Hello Michael!")
                 .subtitle("Hello message.")
                 .body("Our app has been updated, come soon!")
@@ -78,8 +78,8 @@ public class TemplatesTest extends BaseWebTest {
                 .localeIso("en")
                 .build();
 
-        templateLocalizationRepository.saveAndFlush(firstTemplateLocalization);
-        templateLocalizationRepository.saveAndFlush(secondTemplateLocalization);
+        localizationsRepository.saveAndFlush(firstLocalization);
+        localizationsRepository.saveAndFlush(secondLocalization);
     }
 
     @Before
