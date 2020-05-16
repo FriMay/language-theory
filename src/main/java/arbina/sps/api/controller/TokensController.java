@@ -24,7 +24,7 @@ import java.util.Optional;
 @Transactional
 public class TokensController {
 
-    private DeviceTokenRepository tokenRepository;
+    private final DeviceTokenRepository tokenRepository;
 
     public TokensController(DeviceTokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;
