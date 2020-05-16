@@ -7,11 +7,11 @@ import arbina.infra.exceptions.BadRequestException;
 import arbina.infra.exceptions.NotFoundException;
 import arbina.infra.services.id.Authority;
 import arbina.infra.utils.DtoUtils;
-import arbina.sps.api.dto.TemplateLocalizationDTO;
+import arbina.sps.api.dto.LocalizationDTO;
 import arbina.sps.config.SwaggerConfig;
 import arbina.sps.store.entity.Template;
-import arbina.sps.store.entity.TemplateLocalization;
-import arbina.sps.store.repository.TemplateLocalizationRepository;
+import arbina.sps.store.entity.Localization;
+import arbina.sps.store.repository.LocalizationsRepository;
 import arbina.sps.store.repository.TemplatesRepository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -26,27 +26,27 @@ import java.util.stream.Stream;
 
 @Controller
 @Transactional
-public class TemplateLocalizationController implements DtoUtils {
+public class LocalizationsController implements DtoUtils {
 
-    private final TemplateLocalizationRepository templateLocalizationRepository;
+    private final LocalizationsRepository localizationsRepository;
 
     private final TemplatesRepository templatesRepository;
 
-    public TemplateLocalizationController(TemplateLocalizationRepository templateLocalizationRepository,
-                                          TemplatesRepository templatesRepository) {
-        this.templateLocalizationRepository = templateLocalizationRepository;
+    public LocalizationsController(LocalizationsRepository templateLocalizationRepository,
+                                   TemplatesRepository templatesRepository) {
+        this.localizationsRepository = templateLocalizationRepository;
         this.templatesRepository = templatesRepository;
     }
 
     @ApiOperation(value = "Fetch localization list for specified template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @GetMapping("/api/templates/locales/{templateId}")
+    @GetMapping("/api/templates/localizations/{templateId}")
     @Secured({
             Authority.OBSERVER,
             Authority.EMAIL_MARKETING,
             Authority.EMAIL_NOTIFIER
     })
-    public ResponseEntity<CursoredListBodyDTO<TemplateLocalizationDTO>> fetchTemplateLocalizations(
+    public ResponseEntity<CursoredListBodyDTO<LocalizationDTO>> fetchTemplateLocalizations(
             @RequestParam(defaultValue = "") String cursor,
             @RequestParam(defaultValue = "100") Integer limit,
             @PathVariable Long templateId) {
@@ -55,101 +55,101 @@ public class TemplateLocalizationController implements DtoUtils {
             throw new BadRequestException("Template id can't be empty");
         }
 
-        Stream<TemplateLocalization> templateLocalizationStream =
-                templateLocalizationRepository.fetchAllByTemplateId(templateId);
+        Stream<Localization> localizationsStream =
+                localizationsRepository.fetchAllByTemplateId(templateId);
 
-        CursoredListDTO<TemplateLocalization, TemplateLocalizationDTO> dto =
-                new CursoredListDTO<>(templateLocalizationStream.iterator(),
-                        cursor, limit, TemplateLocalizationDTO::of);
+        CursoredListDTO<Localization, LocalizationDTO> dto =
+                new CursoredListDTO<>(localizationsStream.iterator(),
+                        cursor, limit, LocalizationDTO::of);
 
         return ResponseEntity.ok(dto);
     }
 
     @ApiOperation(value = "Update a template localization.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @PutMapping("/api/templates/locales/{templateLocalizationId}")
+    @PutMapping("/api/templates/localizations/{localizationId}")
     @Secured({Authority.EMAIL_MARKETING})
-    public ResponseEntity<TemplateLocalizationDTO> updateTemplateLocalization(
-            @PathVariable Long templateLocalizationId,
-            @RequestBody TemplateLocalizationDTO dto) {
+    public ResponseEntity<LocalizationDTO> updateTemplateLocalization(
+            @PathVariable Long localizationId,
+            @RequestBody LocalizationDTO dto) {
 
-        if (templateLocalizationId == null) {
+        if (localizationId == null) {
             throw new BadRequestException("Template localization id can't be empty");
         }
 
         validateObject(dto);
 
-        TemplateLocalization templateLocalization =
-                templateLocalizationRepository
+        Localization localization =
+                localizationsRepository
                         .findByTemplateIdAndLocale(dto.getTemplateId(), dto.getLocaleIso())
                         .orElse(null);
 
-        if (templateLocalization != null && !templateLocalizationId.equals(templateLocalization.getId())) {
+        if (localization != null && !localizationId.equals(localization.getId())) {
             throw new BadRequestException("Template localization with this locale exists, choice another locale.");
         }
 
-        TemplateLocalization ent = templateLocalization;
+        Localization ent = localization;
 
         if (ent == null){
-            ent = templateLocalizationRepository.findById(templateLocalizationId).orElse(null);
+            ent = localizationsRepository.findById(localizationId).orElse(null);
         }
 
         if (ent == null) {
             throw new NotFoundException(String.format("Template localization #%s is not found",
-                    templateLocalizationId));
+                    localizationId));
         }
 
         dtoToEntity(dto, ent);
 
-        ent = templateLocalizationRepository.saveAndFlush(ent);
+        ent = localizationsRepository.saveAndFlush(ent);
 
-        return ResponseEntity.ok(TemplateLocalizationDTO.of(ent));
+        return ResponseEntity.ok(LocalizationDTO.of(ent));
     }
 
     @ApiOperation(value = "Create a template localization.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @PostMapping("/api/templates/locales")
+    @PostMapping("/api/templates/localizations")
     @Secured({Authority.EMAIL_MARKETING})
-    public ResponseEntity<TemplateLocalizationDTO> createTemplateLocalization(
-            @RequestBody TemplateLocalizationDTO dto) {
+    public ResponseEntity<LocalizationDTO> createTemplateLocalization(
+            @RequestBody LocalizationDTO dto) {
 
         validateObject(dto);
 
-        TemplateLocalization templateLocalization =
-                templateLocalizationRepository
+        Localization localization =
+                localizationsRepository
                         .findByTemplateIdAndLocale(dto.getTemplateId(), dto.getLocaleIso())
                         .orElse(null);
 
-        if (templateLocalization != null) {
+        if (localization != null) {
             throw new BadRequestException("Template locale with this localization exists.");
         }
 
-        TemplateLocalization ent = new TemplateLocalization();
+        Localization ent = new Localization();
 
         dtoToEntity(dto, ent);
 
-        ent = templateLocalizationRepository.saveAndFlush(ent);
+        ent = localizationsRepository.saveAndFlush(ent);
 
-        return ResponseEntity.ok(TemplateLocalizationDTO.of(ent));
+        return ResponseEntity.ok(LocalizationDTO.of(ent));
     }
 
     @ApiOperation(value = "Delete a template localization.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @DeleteMapping("/api/templates/locales/{templateLocalizationId}")
+    @DeleteMapping("/api/templates/localizations/{localizationId}")
     @Secured({Authority.EMAIL_MARKETING})
-    public ResponseEntity<AckDTO> deleteTemplateLocalization(@PathVariable Long templateLocalizationId) {
+    public ResponseEntity<AckDTO> deleteTemplateLocalization(@PathVariable Long localizationId) {
 
-        if (!templateLocalizationRepository.existsById(templateLocalizationId)) {
+        if (!localizationsRepository.existsById(localizationId)) {
             throw new NotFoundException(String.format("Template localization \"%s\" is not exist",
-                    templateLocalizationId));
+                    localizationId));
         }
 
-        templateLocalizationRepository.deleteById(templateLocalizationId);
+        localizationsRepository.deleteById(localizationId);
 
         return ResponseEntity.ok(new AckDTO());
     }
 
-    private void dtoToEntity(TemplateLocalizationDTO dto, TemplateLocalization ent) {
+    private void dtoToEntity(LocalizationDTO dto, Localization ent) {
 
         ent.setTitle(dto.getTitle());
         ent.setSubtitle(dto.getSubtitle());

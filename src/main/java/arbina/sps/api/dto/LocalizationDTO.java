@@ -1,7 +1,7 @@
 package arbina.sps.api.dto;
 
 import arbina.infra.utils.ValidateField;
-import arbina.sps.store.entity.TemplateLocalization;
+import arbina.sps.store.entity.Localization;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "Describes template localization.")
-public class TemplateLocalizationDTO {
+public class LocalizationDTO {
 
     @JsonProperty("id")
     @ApiParam(required = true)
@@ -48,9 +48,9 @@ public class TemplateLocalizationDTO {
     @ValidateField(required = true, message = "Template id can't be empty.")
     private Long templateId;
 
-    public static TemplateLocalizationDTO of(TemplateLocalization ent) {
+    public static LocalizationDTO of(Localization ent) {
 
-        return TemplateLocalizationDTO.builder()
+        return LocalizationDTO.builder()
                 .id(ent.getId())
                 .title(ent.getTitle())
                 .subtitle(ent.getSubtitle())

@@ -4,10 +4,9 @@ import arbina.infra.services.id.Authority;
 import arbina.sps.BaseWebTest;
 import arbina.sps.api.controller.TemplatesController;
 import arbina.sps.store.entity.Template;
-import arbina.sps.store.entity.TemplateLocalization;
-import arbina.sps.store.repository.TemplateLocalizationRepository;
+import arbina.sps.store.entity.Localization;
+import arbina.sps.store.repository.LocalizationsRepository;
 import arbina.sps.store.repository.TemplatesRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -39,7 +38,7 @@ public class TemplatesTest extends BaseWebTest {
     private final Logger logger = LogManager.getLogger();
 
     @Autowired
-    private TemplateLocalizationRepository templateLocalizationRepository;
+    private LocalizationsRepository templateLocalizationRepository;
 
     @Autowired
     private TemplatesRepository templatesRepository;
@@ -63,7 +62,7 @@ public class TemplatesTest extends BaseWebTest {
 
         secondTemplateId = templatesRepository.saveAndFlush(secondTemplate).getId();
 
-        TemplateLocalization firstTemplateLocalization = TemplateLocalization.builder()
+        Localization firstTemplateLocalization = Localization.builder()
                 .title("Hello Michael!")
                 .subtitle("Hello message.")
                 .body("Our app has been updated, come soon!")
@@ -71,7 +70,7 @@ public class TemplatesTest extends BaseWebTest {
                 .localeIso("ru")
                 .build();
 
-        TemplateLocalization secondTemplateLocalization = TemplateLocalization.builder()
+        Localization secondTemplateLocalization = Localization.builder()
                 .title("Hello Michael!")
                 .subtitle("Hello message.")
                 .body("Our app has been updated, come soon!")

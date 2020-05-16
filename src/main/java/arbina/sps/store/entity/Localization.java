@@ -13,8 +13,8 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "template_localization")
-public class TemplateLocalization implements CursoredListDTO.Entity {
+@Table(name = "localization")
+public class Localization implements CursoredListDTO.Entity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

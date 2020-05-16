@@ -3,10 +3,10 @@ package arbina.sps.api;
 
 import arbina.infra.services.id.Authority;
 import arbina.sps.BaseWebTest;
-import arbina.sps.api.controller.TemplateLocalizationController;
+import arbina.sps.api.controller.LocalizationsController;
 import arbina.sps.store.entity.Template;
-import arbina.sps.store.entity.TemplateLocalization;
-import arbina.sps.store.repository.TemplateLocalizationRepository;
+import arbina.sps.store.entity.Localization;
+import arbina.sps.store.repository.LocalizationsRepository;
 import arbina.sps.store.repository.TemplatesRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,8 +25,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TemplateLocalizationController.class)
-public class TemplateLocalizationTest extends BaseWebTest {
+@WebMvcTest(LocalizationsController.class)
+public class LocalizationsTest extends BaseWebTest {
 
     private static boolean isDataSetup = false;
 
@@ -37,7 +37,7 @@ public class TemplateLocalizationTest extends BaseWebTest {
     private final Logger logger = LogManager.getLogger();
 
     @Autowired
-    private TemplateLocalizationRepository templateLocalizationRepository;
+    private LocalizationsRepository templateLocalizationRepository;
 
     @Autowired
     private TemplatesRepository templatesRepository;
@@ -63,7 +63,7 @@ public class TemplateLocalizationTest extends BaseWebTest {
 
         templatesRepository.saveAndFlush(secondTemplate);
 
-        TemplateLocalization firstTemplateLocalization = TemplateLocalization.builder()
+        Localization firstTemplateLocalization = Localization.builder()
                 .title("Hello Michael!")
                 .subtitle("Hello message.")
                 .body("Our app has been updated, come soon!")
@@ -71,7 +71,7 @@ public class TemplateLocalizationTest extends BaseWebTest {
                 .localeIso("ru")
                 .build();
 
-        TemplateLocalization secondTemplateLocalization = TemplateLocalization.builder()
+        Localization secondTemplateLocalization = Localization.builder()
                 .title("Hello Michael!")
                 .subtitle("Hello message.")
                 .body("Our app has been updated, come soon!")
@@ -97,7 +97,7 @@ public class TemplateLocalizationTest extends BaseWebTest {
     @Test
     @WithMockUser(authorities = Authority.EMAIL_MARKETING)
     public void shouldReturnNonEmptyList() throws Exception {
-        mvc.perform(get("/api/templates/locales/{templateId}", firstTemplateId))
+        mvc.perform(get("/api/templates/localizations/{templateId}", firstTemplateId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items").isNotEmpty());
     }
@@ -112,7 +112,7 @@ public class TemplateLocalizationTest extends BaseWebTest {
         jsonObject.put("template_id", firstTemplateId);
         jsonObject.put("locale_iso", "eu");
 
-        mvc.perform(post("/api/templates/locales")
+        mvc.perform(post("/api/templates/localizations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObject.toString()))
                 .andExpect(status().isOk());
@@ -128,7 +128,7 @@ public class TemplateLocalizationTest extends BaseWebTest {
         jsonObject.put("template_id", firstTemplateId);
         jsonObject.put("locale_iso", "eu");
 
-        mvc.perform(post("/api/templates/locales")
+        mvc.perform(post("/api/templates/localizations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObject.toString()))
                 .andExpect(status().isBadRequest());
@@ -144,7 +144,7 @@ public class TemplateLocalizationTest extends BaseWebTest {
         jsonObject.put("template_id", firstTemplateId);
         jsonObject.put("locale_iso", "ru");
 
-        mvc.perform(put("/api/templates/locales/{templateLocalizationId}", firstTemplateLocalizationId)
+        mvc.perform(put("/api/templates/localizations/{localizationId}", firstTemplateLocalizationId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObject.toString()))
                 .andExpect(status().isOk());
@@ -160,7 +160,7 @@ public class TemplateLocalizationTest extends BaseWebTest {
         jsonObject.put("template_id", firstTemplateId);
         jsonObject.put("locale_iso", "eu");
 
-        mvc.perform(put("/api/templates/locales/{templateLocalizationId}", firstTemplateLocalizationId)
+        mvc.perform(put("/api/templates/localizations/{localizationId}", firstTemplateLocalizationId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObject.toString()))
                 .andExpect(status().isBadRequest());
