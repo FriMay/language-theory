@@ -66,8 +66,7 @@ public class TemplatesController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PostMapping("/api/templates")
     @Secured({Authority.PUSH_MARKETING})
-    public ResponseEntity<TemplateDTO> createTemplate(
-            @RequestBody TemplateDTO dto) {
+    public ResponseEntity<TemplateDTO> createTemplate(@RequestBody TemplateDTO dto) {
 
         validateObject(dto);
 
@@ -87,9 +86,8 @@ public class TemplatesController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PutMapping(value = "/api/templates/{templateId}")
     @Secured({Authority.PUSH_MARKETING})
-    public ResponseEntity<TemplateDTO> updateTemplate(
-            @PathVariable Long templateId,
-            @RequestBody TemplateDTO dto) {
+    public ResponseEntity<TemplateDTO> updateTemplate(@PathVariable Long templateId,
+                                                      @RequestBody TemplateDTO dto) {
 
         if (templateId == null) {
             throw new BadRequestException("Template id can't be empty");
