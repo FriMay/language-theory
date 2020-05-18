@@ -52,7 +52,7 @@ public class Template implements CursoredListDTO.Entity {
     @ElementCollection
     @CollectionTable(name = "tempate_params", joinColumns = @JoinColumn(name = "key"))
     @Column(name = "value")
-    Map<String, String> params;
+    private Map<String, String> params;
 
     @Override
     public String getCursor() {
