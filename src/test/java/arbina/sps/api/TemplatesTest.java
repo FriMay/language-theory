@@ -19,9 +19,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -107,6 +105,7 @@ public class TemplatesTest extends BaseWebTest {
     @Test
     @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnNonEmptyList() throws Exception {
+
         mvc.perform(get("/api/templates"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items").isNotEmpty());
@@ -115,6 +114,7 @@ public class TemplatesTest extends BaseWebTest {
     @Test
     @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnFilteredByNameList() throws Exception {
+
         mvc.perform(get("/api/templates")
                 .param("filter", "or"))
                 .andExpect(status().isOk())
@@ -126,21 +126,15 @@ public class TemplatesTest extends BaseWebTest {
     public void shouldReturnUpdatedTemplate() throws Exception {
 
         Map<String, String> params = new HashMap<>();
-
         params.put("Change", "Data");
         params.put("Hello", "Dmitriy");
 
-        Map<String, Object> template = new HashMap<>();
-        template.put("name", "Changed template");
-        template.put("description", "hello world");
-        template.put("badge", 3);
-        template.put("params", params);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
         mvc.perform(put("/api/templates/{templateId}", firstTemplateId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(template)))
+                .param("name", "Changed template")
+                .param("description", "hello world")
+                .param("badge", "3")
+                .param("params_json", new ObjectMapper().writeValueAsString(params))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
