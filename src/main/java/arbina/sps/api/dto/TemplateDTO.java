@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.util.*;
 
 @Data
 @Builder
@@ -21,19 +21,19 @@ import java.util.Date;
 @ApiModel(description = "Describes template.")
 public class TemplateDTO {
 
-    @JsonProperty("id")
     @ApiParam(required = true)
     private Long id;
 
-    @JsonProperty("name")
     @ApiParam(required = true)
     @ValidateField(required = true, message = "Template name can't be empty.")
     private String name;
 
-    @JsonProperty("description")
     @ApiParam(required = true)
     @ValidateField(required = true, message = "Template description can't be empty.")
     private String description;
+
+    @ApiParam(required = true)
+    private Integer badge;
 
     @JsonProperty("created_at")
     private Date createdAt;
@@ -44,6 +44,8 @@ public class TemplateDTO {
     @JsonProperty("last_used_at")
     private Date lastUsedAt;
 
+    private Map<String, String> params = new HashMap<>();
+
     public static TemplateDTO of(Template ent) {
 
         return TemplateDTO.builder()
@@ -53,6 +55,8 @@ public class TemplateDTO {
                 .createdAt(ent.getCreatedAt())
                 .updatedAt(ent.getUpdatedAt())
                 .lastUsedAt(ent.getLastUsedAt())
+                .badge(ent.getBadge())
+                .params(ent.getParams())
                 .build();
     }
 }

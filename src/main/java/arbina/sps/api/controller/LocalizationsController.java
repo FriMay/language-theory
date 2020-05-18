@@ -68,8 +68,8 @@ public class LocalizationsController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PutMapping("/api/templates/localizations/{localizationId}")
     @Secured({Authority.PUSH_MARKETING})
-    public ResponseEntity<LocalizationDTO> updateTemplateLocalization(@PathVariable Long localizationId,
-                                                                      @RequestBody LocalizationDTO dto) {
+    public ResponseEntity<LocalizationDTO> updateLocalization(@PathVariable Long localizationId,
+                                                              @RequestBody LocalizationDTO dto) {
 
         if (localizationId == null) {
             throw new BadRequestException("Template localization id can't be empty");
@@ -94,7 +94,7 @@ public class LocalizationsController implements DtoUtils {
             throw new NotFoundException(String.format("Template localization #%s is not found", localizationId));
         }
 
-        dtoToEntity(dto, ent);
+        Localization.fromDTO(dto, ent, templatesRepository);
 
         ent = localizationsRepository.saveAndFlush(ent);
 
@@ -105,7 +105,7 @@ public class LocalizationsController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PostMapping("/api/templates/localizations")
     @Secured({Authority.PUSH_MARKETING})
-    public ResponseEntity<LocalizationDTO> createTemplateLocalization(@RequestBody LocalizationDTO dto) {
+    public ResponseEntity<LocalizationDTO> createLocalization(@RequestBody LocalizationDTO dto) {
 
         validateObject(dto);
 
@@ -118,7 +118,7 @@ public class LocalizationsController implements DtoUtils {
 
         Localization ent = new Localization();
 
-        dtoToEntity(dto, ent);
+        Localization.fromDTO(dto, ent, templatesRepository);
 
         ent = localizationsRepository.saveAndFlush(ent);
 
@@ -129,7 +129,7 @@ public class LocalizationsController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @DeleteMapping("/api/templates/localizations/{localizationId}")
     @Secured({Authority.PUSH_MARKETING})
-    public ResponseEntity<AckDTO> deleteTemplateLocalization(@PathVariable Long localizationId) {
+    public ResponseEntity<AckDTO> deleteLocalization(@PathVariable Long localizationId) {
 
         if (!localizationsRepository.existsById(localizationId)) {
             throw new NotFoundException(String.format("Template localization \"%s\" is not exist", localizationId));
@@ -138,25 +138,6 @@ public class LocalizationsController implements DtoUtils {
         localizationsRepository.deleteById(localizationId);
 
         return ResponseEntity.ok(new AckDTO());
-    }
-
-    private void dtoToEntity(LocalizationDTO dto, Localization ent) {
-
-        ent.setTitle(dto.getTitle());
-        ent.setSubtitle(dto.getSubtitle());
-        ent.setBody(dto.getBody());
-        ent.setLocaleIso(dto.getLocaleIso());
-
-        if (!dto.getTemplateId().equals(ent.getTemplateId())) {
-
-            Optional<Template> template = templatesRepository.findById(dto.getTemplateId());
-
-            if (!template.isPresent()) {
-                throw new BadRequestException("Template with this id doesn't exist.");
-            }
-
-            ent.setTemplate(template.get());
-        }
     }
 
 }

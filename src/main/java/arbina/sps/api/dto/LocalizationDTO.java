@@ -19,21 +19,17 @@ import lombok.NoArgsConstructor;
 @ApiModel(description = "Describes template localization.")
 public class LocalizationDTO {
 
-    @JsonProperty("id")
     @ApiParam(required = true)
     private Long id;
 
-    @JsonProperty("title")
     @ApiParam(required = true)
     @ValidateField(required = true, message = "Template title can't be empty.")
     private String title;
 
-    @JsonProperty("subtitle")
     @ApiParam(required = true)
     @ValidateField(required = true, message = "Template subtitle can't be empty.")
     private String subtitle;
 
-    @JsonProperty("body")
     @ApiParam(required = true)
     @ValidateField(required = true, message = "Template body can't be empty.")
     private String body;

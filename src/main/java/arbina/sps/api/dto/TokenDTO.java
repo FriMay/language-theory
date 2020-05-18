@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @ApiModel(description = "Describes device token.")
 public class TokenDTO {
 
-    @JsonProperty("id")
     private Long id;
 
     @JsonProperty("device_token")

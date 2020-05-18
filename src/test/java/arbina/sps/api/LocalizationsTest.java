@@ -95,7 +95,7 @@ public class LocalizationsTest extends BaseWebTest {
     }
 
     @Test
-    @WithMockUser(authorities = Authority.EMAIL_MARKETING)
+    @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnNonEmptyList() throws Exception {
         mvc.perform(get("/api/templates/localizations/{templateId}", firstTemplateId))
                 .andExpect(status().isOk())
@@ -103,7 +103,7 @@ public class LocalizationsTest extends BaseWebTest {
     }
 
     @Test
-    @WithMockUser(authorities = Authority.EMAIL_MARKETING)
+    @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnCreatedTemplateLocalization() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("title", "Some subject");
@@ -119,7 +119,7 @@ public class LocalizationsTest extends BaseWebTest {
     }
 
     @Test
-    @WithMockUser(authorities = Authority.EMAIL_MARKETING)
+    @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnBadRequestOnCreate() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("title", "Bad template");
@@ -135,7 +135,7 @@ public class LocalizationsTest extends BaseWebTest {
     }
 
     @Test
-    @WithMockUser(authorities = Authority.EMAIL_MARKETING)
+    @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnUpdatedTemplateLocalization() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("title", "New subject");
@@ -151,7 +151,7 @@ public class LocalizationsTest extends BaseWebTest {
     }
 
     @Test
-    @WithMockUser(authorities = Authority.EMAIL_MARKETING)
+    @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnBadRequestOnUpdate() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("title", "Update subject");
