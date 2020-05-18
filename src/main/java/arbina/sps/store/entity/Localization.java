@@ -1,12 +1,16 @@
 package arbina.sps.store.entity;
 
 import arbina.infra.dto.CursoredListDTO;
+import arbina.infra.exceptions.BadRequestException;
+import arbina.sps.api.dto.LocalizationDTO;
+import arbina.sps.store.repository.TemplatesRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Data
 @Entity
@@ -42,5 +46,23 @@ public class Localization implements CursoredListDTO.Entity {
     @Override
     public String getCursor() {
         return id.toString();
+    }
+
+    public static void fromDTO(LocalizationDTO dto, Localization ent, TemplatesRepository templatesRepository) {
+        ent.setTitle(dto.getTitle());
+        ent.setSubtitle(dto.getSubtitle());
+        ent.setBody(dto.getBody());
+        ent.setLocaleIso(dto.getLocaleIso());
+
+        if (!dto.getTemplateId().equals(ent.getTemplateId())) {
+
+            Optional<Template> template = templatesRepository.findById(dto.getTemplateId());
+
+            if (!template.isPresent()) {
+                throw new BadRequestException("Template with this id doesn't exist.");
+            }
+
+            ent.setTemplate(template.get());
+        }
     }
 }

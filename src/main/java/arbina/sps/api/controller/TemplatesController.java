@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 @Controller
 @Transactional
 public class TemplatesController implements DtoUtils {
+
     private final TemplatesRepository templatesRepository;
 
     public TemplatesController(TemplatesRepository templatesRepository) {
@@ -37,8 +38,8 @@ public class TemplatesController implements DtoUtils {
     @GetMapping("/api/templates")
     @Secured({
             Authority.OBSERVER,
-            Authority.EMAIL_MARKETING,
-            Authority.EMAIL_NOTIFIER
+            Authority.PUSH_NOTIFIER,
+            Authority.PUSH_MARKETING
     })
     public ResponseEntity<CursoredListBodyDTO<TemplateDTO>> fetchTemplates(
             @RequestParam(defaultValue = "") String cursor,
@@ -64,28 +65,28 @@ public class TemplatesController implements DtoUtils {
     @ApiOperation(value = "Create a template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PostMapping("/api/templates")
-    @Secured({Authority.EMAIL_MARKETING})
+    @Secured({Authority.PUSH_MARKETING})
     public ResponseEntity<TemplateDTO> createTemplate(
             @RequestBody TemplateDTO dto) {
 
         validateObject(dto);
 
-        Template ent = new Template();
+        Template template = new Template();
 
-        dtoToEntity(dto, ent);
+        Template.fromDTO(dto, template);
 
-        ent.setCreatedAt(new Date());
-        ent.setUpdatedAt(new Date());
+        template.setCreatedAt(new Date());
+        template.setUpdatedAt(new Date());
 
-        ent = templatesRepository.saveAndFlush(ent);
+        template = templatesRepository.saveAndFlush(template);
 
-        return ResponseEntity.ok(TemplateDTO.of(ent));
+        return ResponseEntity.ok(TemplateDTO.of(template));
     }
 
     @ApiOperation(value = "Update a template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @PutMapping("/api/templates/{templateId}")
-    @Secured({Authority.EMAIL_MARKETING})
+    @PutMapping(value = "/api/templates/{templateId}")
+    @Secured({Authority.PUSH_MARKETING})
     public ResponseEntity<TemplateDTO> updateTemplate(
             @PathVariable Long templateId,
             @RequestBody TemplateDTO dto) {
@@ -96,24 +97,24 @@ public class TemplatesController implements DtoUtils {
 
         validateObject(dto);
 
-        Template ent = templatesRepository.findById(templateId).orElse(null);
-        if (ent == null) {
+        Template template = templatesRepository.findById(templateId).orElse(null);
+        if (template == null) {
             throw new NotFoundException(String.format("Template #%s is not found", templateId));
         }
 
-        dtoToEntity(dto, ent);
+        Template.fromDTO(dto, template);
 
-        ent.setUpdatedAt(new Date());
+        template.setUpdatedAt(new Date());
 
-        ent = templatesRepository.saveAndFlush(ent);
+        template = templatesRepository.saveAndFlush(template);
 
-        return ResponseEntity.ok(TemplateDTO.of(ent));
+        return ResponseEntity.ok(TemplateDTO.of(template));
     }
 
     @ApiOperation(value = "Delete a template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @DeleteMapping("/api/templates/{templateId}")
-    @Secured({Authority.EMAIL_MARKETING})
+    @Secured({Authority.PUSH_MARKETING})
     public ResponseEntity<AckDTO> deleteTemplate(@PathVariable Long templateId) {
 
         if (!templatesRepository.existsById(templateId)) {
@@ -125,8 +126,4 @@ public class TemplatesController implements DtoUtils {
         return ResponseEntity.ok(new AckDTO());
     }
 
-    private void dtoToEntity(TemplateDTO dto, Template ent) {
-        ent.setName(dto.getName());
-        ent.setDescription(dto.getDescription());
-    }
 }
