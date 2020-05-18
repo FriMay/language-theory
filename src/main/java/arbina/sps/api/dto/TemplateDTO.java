@@ -44,7 +44,7 @@ public class TemplateDTO {
     @JsonProperty("last_used_at")
     private Date lastUsedAt;
 
-    private Map<String, String> params = new HashMap<>();
+    private Map<String, String> params;
 
     public static TemplateDTO of(Template ent) {
 
