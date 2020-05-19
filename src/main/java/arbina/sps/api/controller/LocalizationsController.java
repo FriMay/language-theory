@@ -9,19 +9,19 @@ import arbina.infra.services.id.Authority;
 import arbina.infra.utils.DtoUtils;
 import arbina.sps.api.dto.LocalizationDTO;
 import arbina.sps.config.SwaggerConfig;
-import arbina.sps.store.entity.Template;
 import arbina.sps.store.entity.Localization;
 import arbina.sps.store.repository.LocalizationsRepository;
 import arbina.sps.store.repository.TemplatesRepository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import org.apache.tomcat.jni.Local;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Controller
@@ -40,16 +40,16 @@ public class LocalizationsController implements DtoUtils {
 
     @ApiOperation(value = "Fetch localization list for specified template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @GetMapping("/api/templates/localizations/{templateId}")
+    @GetMapping("/api/templates/{templateId}/localizations")
     @Secured({
             Authority.OBSERVER,
             Authority.PUSH_MARKETING,
             Authority.PUSH_NOTIFIER
     })
     public ResponseEntity<CursoredListBodyDTO<LocalizationDTO>> fetchLocalizations(
+            @PathVariable Long templateId,
             @RequestParam(defaultValue = "") String cursor,
-            @RequestParam(defaultValue = "100") Integer limit,
-            @PathVariable Long templateId) {
+            @RequestParam(defaultValue = "100") Integer limit) {
 
         if (templateId == null) {
             throw new BadRequestException("Template id can't be empty");
@@ -57,8 +57,7 @@ public class LocalizationsController implements DtoUtils {
 
         Stream<Localization> localizationsStream = localizationsRepository.fetchAllByTemplateId(templateId);
 
-        CursoredListDTO<Localization, LocalizationDTO> dto =
-                new CursoredListDTO<>(localizationsStream.iterator(),
+        CursoredListDTO<Localization, LocalizationDTO> dto = new CursoredListDTO<>(localizationsStream.iterator(),
                         cursor, limit, LocalizationDTO::of);
 
         return ResponseEntity.ok(dto);
@@ -69,29 +68,33 @@ public class LocalizationsController implements DtoUtils {
     @PutMapping("/api/templates/localizations/{localizationId}")
     @Secured({Authority.PUSH_MARKETING})
     public ResponseEntity<LocalizationDTO> updateLocalization(@PathVariable Long localizationId,
-                                                              @RequestBody LocalizationDTO dto) {
+                                                              @RequestParam String title,
+                                                              @RequestParam String subtitle,
+                                                              @RequestParam String body,
+                                                              @RequestParam("locale_iso") String localeIso) {
 
-        if (localizationId == null) {
-            throw new BadRequestException("Template localization id can't be empty");
+        Localization localization = localizationsRepository.findById(localizationId).orElse(null);
+        if (localization == null) {
+            throw new BadRequestException("Locale is not exist.");
         }
+
+        LocalizationDTO dto = LocalizationDTO.builder()
+                .id(localizationId)
+                .templateId(localization.getTemplateId())
+                .title(title)
+                .subtitle(subtitle)
+                .body(body)
+                .localeIso(localeIso)
+                .build();
 
         validateObject(dto);
 
-        Localization localization = localizationsRepository
-                        .findByTemplateIdAndLocale(dto.getTemplateId(), dto.getLocaleIso())
-                        .orElse(null);
-
-        if (localization != null && !localizationId.equals(localization.getId())) {
-            throw new BadRequestException("Template localization with this locale exists, choice another locale.");
-        }
-
-        Localization ent = localization;
+        Localization ent = localizationsRepository.findByTemplateIdAndLocale(dto.getTemplateId(), dto.getLocaleIso())
+                .orElse(null);
         if (ent == null) {
-            ent = localizationsRepository.findById(localizationId).orElse(null);
-        }
-
-        if (ent == null) {
-            throw new NotFoundException(String.format("Template localization #%s is not found", localizationId));
+            throw new BadRequestException("Template is not exist");
+        } else if (!Objects.equals(ent.getId(), dto.getId())) {
+            throw new BadRequestException("Template localization with this locale exists.");
         }
 
         Localization.fromDTO(dto, ent, templatesRepository);
@@ -103,11 +106,21 @@ public class LocalizationsController implements DtoUtils {
 
     @ApiOperation(value = "Create a template localization.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @PostMapping("/api/templates/localizations")
+    @PostMapping("/api/templates/{templateId}/localizations")
     @Secured({Authority.PUSH_MARKETING})
-    public ResponseEntity<LocalizationDTO> createLocalization(@RequestBody LocalizationDTO dto) {
+    public ResponseEntity<LocalizationDTO> createLocalization(@PathVariable Long templateId,
+                                                              @RequestParam String title,
+                                                              @RequestParam String subtitle,
+                                                              @RequestParam String body,
+                                                              @RequestParam("locale_iso") String localeIso) {
 
-        validateObject(dto);
+        LocalizationDTO dto = LocalizationDTO.builder()
+                .templateId(templateId)
+                .title(title)
+                .subtitle(subtitle)
+                .body(body)
+                .localeIso(localeIso)
+                .build();
 
         Localization localization = localizationsRepository
                 .findByTemplateIdAndLocale(dto.getTemplateId(), dto.getLocaleIso()).orElse(null);

@@ -3,7 +3,6 @@ package arbina.sps.api.controller;
 import arbina.infra.dto.AckDTO;
 import arbina.infra.dto.CursoredListBodyDTO;
 import arbina.infra.dto.CursoredListDTO;
-import arbina.infra.exceptions.BadRequestException;
 import arbina.infra.exceptions.NotFoundException;
 import arbina.infra.services.id.Authority;
 import arbina.infra.utils.DtoUtils;
@@ -11,6 +10,9 @@ import arbina.sps.api.dto.TemplateDTO;
 import arbina.sps.config.SwaggerConfig;
 import arbina.sps.store.entity.Template;
 import arbina.sps.store.repository.TemplatesRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -29,8 +33,12 @@ public class TemplatesController implements DtoUtils {
 
     private final TemplatesRepository templatesRepository;
 
-    public TemplatesController(TemplatesRepository templatesRepository) {
+    private final ObjectMapper mapper;
+
+    public TemplatesController(TemplatesRepository templatesRepository,
+                               ObjectMapper mapper) {
         this.templatesRepository = templatesRepository;
+        this.mapper = mapper;
     }
 
     @ApiOperation(value = "Fetch template list.",
@@ -38,7 +46,7 @@ public class TemplatesController implements DtoUtils {
     @GetMapping("/api/templates")
     @Secured({
             Authority.OBSERVER,
-            Authority.PUSH_NOTIFIER,
+            Authority.PUSH_MARKETING,
             Authority.PUSH_MARKETING
     })
     public ResponseEntity<CursoredListBodyDTO<TemplateDTO>> fetchTemplates(
@@ -66,47 +74,66 @@ public class TemplatesController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PostMapping("/api/templates")
     @Secured({Authority.PUSH_MARKETING})
-    public ResponseEntity<TemplateDTO> createTemplate(@RequestBody TemplateDTO dto) {
+    public ResponseEntity<TemplateDTO> createTemplate(@RequestParam String name,
+                                                      @RequestParam String description,
+                                                      @RequestParam Integer badge,
+                                                      @RequestParam("params_json") String paramsJson)
+            throws JsonProcessingException {
+
+        TemplateDTO dto = TemplateDTO.builder()
+                .name(name)
+                .description(description)
+                .badge(badge)
+                .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {}))
+                .build();
 
         validateObject(dto);
 
-        Template template = new Template();
+        Template ent = new Template();
 
-        Template.fromDTO(dto, template);
+        dtoToEntity(dto, ent);
 
-        template.setCreatedAt(new Date());
-        template.setUpdatedAt(new Date());
+        ent.setCreatedAt(new Date());
+        ent.setUpdatedAt(new Date());
 
-        template = templatesRepository.saveAndFlush(template);
+        ent = templatesRepository.saveAndFlush(ent);
 
-        return ResponseEntity.ok(TemplateDTO.of(template));
+        return ResponseEntity.ok(TemplateDTO.of(ent));
     }
 
     @ApiOperation(value = "Update a template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @PutMapping(value = "/api/templates/{templateId}")
+    @PutMapping("/api/templates/{templateId}")
     @Secured({Authority.PUSH_MARKETING})
     public ResponseEntity<TemplateDTO> updateTemplate(@PathVariable Long templateId,
-                                                      @RequestBody TemplateDTO dto) {
+                                                      @RequestParam String name,
+                                                      @RequestParam String description,
+                                                      @RequestParam Integer badge,
+                                                      @RequestParam("params_json") String paramsJson)
+            throws JsonProcessingException {
 
-        if (templateId == null) {
-            throw new BadRequestException("Template id can't be empty");
-        }
+        TemplateDTO dto = TemplateDTO.builder()
+                .id(templateId)
+                .name(name)
+                .description(description)
+                .badge(badge)
+                .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {}))
+                .build();
 
         validateObject(dto);
 
-        Template template = templatesRepository.findById(templateId).orElse(null);
-        if (template == null) {
+        Template ent = templatesRepository.findById(templateId).orElse(null);
+        if (ent == null) {
             throw new NotFoundException(String.format("Template #%s is not found", templateId));
         }
 
-        Template.fromDTO(dto, template);
+        dtoToEntity(dto, ent);
 
-        template.setUpdatedAt(new Date());
+        ent.setUpdatedAt(new Date());
 
-        template = templatesRepository.saveAndFlush(template);
+        ent = templatesRepository.saveAndFlush(ent);
 
-        return ResponseEntity.ok(TemplateDTO.of(template));
+        return ResponseEntity.ok(TemplateDTO.of(ent));
     }
 
     @ApiOperation(value = "Delete a template.",
@@ -124,4 +151,8 @@ public class TemplatesController implements DtoUtils {
         return ResponseEntity.ok(new AckDTO());
     }
 
+    private void dtoToEntity(TemplateDTO dto, Template ent) {
+        ent.setName(dto.getName());
+        ent.setDescription(dto.getDescription());
+    }
 }

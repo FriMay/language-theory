@@ -1,6 +1,5 @@
 package arbina.sps.api;
 
-
 import arbina.infra.services.id.Authority;
 import arbina.sps.BaseWebTest;
 import arbina.sps.api.controller.LocalizationsController;
@@ -19,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
-
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -97,7 +95,8 @@ public class LocalizationsTest extends BaseWebTest {
     @Test
     @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnNonEmptyList() throws Exception {
-        mvc.perform(get("/api/templates/localizations/{templateId}", firstTemplateId))
+
+        mvc.perform(get("/api/templates/{templateId}/localizations", firstTemplateId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items").isNotEmpty());
     }
@@ -105,48 +104,40 @@ public class LocalizationsTest extends BaseWebTest {
     @Test
     @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnCreatedTemplateLocalization() throws Exception {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("title", "Some subject");
-        jsonObject.put("subtitle", "Do you like {{ cookie_name }}?");
-        jsonObject.put("body", "<h1>Do you like {{ cookie_name }}?</h1>");
-        jsonObject.put("template_id", firstTemplateId);
-        jsonObject.put("locale_iso", "eu");
 
-        mvc.perform(post("/api/templates/localizations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonObject.toString()))
+        mvc.perform(post("/api/templates/{templateId}/localizations", firstTemplateId)
+                .param("title", "Some subject")
+                .param("subtitle", "Do you like {{ cookie_name }}?")
+                .param("body", "<h1>Do you like {{ cookie_name }}?</h1>")
+                .param("locale_iso", "eu")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnBadRequestOnCreate() throws Exception {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("title", "Bad template");
-        jsonObject.put("subtitle", "Do you like a {{ bad_request }}?");
-        jsonObject.put("body", "<h1>Do you like a {{ bad_request }}?</h1>");
-        jsonObject.put("template_id", firstTemplateId);
-        jsonObject.put("locale_iso", "eu");
 
-        mvc.perform(post("/api/templates/localizations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonObject.toString()))
+        mvc.perform(post("/api/templates/{templateId}/localizations", firstTemplateId)
+                .param("title", "Bad template")
+                .param("subtitle", "Do you like a {{ bad_request }}?")
+                .param("body", "<h1>Do you like a {{ bad_request }}?</h1>")
+                .param("locale_iso", "eu")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnUpdatedTemplateLocalization() throws Exception {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("title", "New subject");
-        jsonObject.put("subtitle", "How about {{ lemonade_name }}?");
-        jsonObject.put("body", "<h1>How about {{ lemonade_name }}?</h1>");
-        jsonObject.put("template_id", firstTemplateId);
-        jsonObject.put("locale_iso", "ru");
 
         mvc.perform(put("/api/templates/localizations/{localizationId}", firstLocalizationId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonObject.toString()))
+                .param("title", "New subject")
+                .param("subtitle", "How about {{ lemonade_name }}?")
+                .param("body", "<h1>How about {{ lemonade_name }}?</h1>")
+                .param("template_id", String.valueOf(firstTemplateId))
+                .param("locale_iso", "ru")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
