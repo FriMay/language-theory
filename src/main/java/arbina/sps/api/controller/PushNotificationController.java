@@ -50,7 +50,7 @@ public class PushNotificationController {
         }
 
         if (template.getLocalizations().isEmpty()){
-            throw new NotFoundException(String.format("Template with \"%s\" name is not found", templateName));
+            throw new NotFoundException("Add at least one localization to this template to use it");
         }
 
         pushNotificationService.sendPushNotification(template);
