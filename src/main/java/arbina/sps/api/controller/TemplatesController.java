@@ -154,5 +154,7 @@ public class TemplatesController implements DtoUtils {
     private void dtoToEntity(TemplateDTO dto, Template ent) {
         ent.setName(dto.getName());
         ent.setDescription(dto.getDescription());
+        ent.setBadge(dto.getBadge());
+        ent.setParams(dto.getParams());
     }
 }
