@@ -31,15 +31,20 @@ public class TokensController {
     }
 
     @ApiOperation(value = "Put device token.",
-            authorizations = { @Authorization(value = SwaggerConfig.oAuth2) })
+            authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PutMapping("/api/tokens")
-    @Secured({ Authority.USER, Authority.OBSERVER })
+    @Secured({Authority.USER, Authority.OBSERVER})
     public ResponseEntity<AckDTO> putToken(@ApiIgnore Principal principal,
                                            String token,
+                                           String localIso,
                                            DeviceTokenType tokenType) {
 
         if (Optional.ofNullable(token).orElse("").length() == 0) {
             throw new BadRequestException("Wrong token");
+        }
+
+        if (Optional.ofNullable(localIso).orElse("").length() == 0) {
+            throw new BadRequestException("Wrong locale iso");
         }
 
         boolean ack = false;
@@ -49,6 +54,7 @@ public class TokensController {
             DeviceToken deviceToken = DeviceToken.builder()
                     .username(principal.getName())
                     .token(token)
+                    .localeIso(localIso)
                     .tokenType(tokenType.toString())
                     .createdAt(new Date())
                     .build();

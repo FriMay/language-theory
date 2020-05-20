@@ -67,6 +67,10 @@ dependencies {
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: springFoxSwaggerVersion
     implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: springFoxSwaggerVersion
 
+    implementation group: 'com.google.firebase', name: 'firebase-admin', version: '6.13.0'
+
+    implementation group: 'com.eatthepath', name: 'pushy', version: '0.14.0'
+
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation group: 'org.springframework.security', name: 'spring-security-test'
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'

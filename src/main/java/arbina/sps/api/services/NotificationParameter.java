@@ -1,4 +1,4 @@
-package arbina.sps.firebase;
+package arbina.sps.api.services;
 
 public enum  NotificationParameter {
     SOUND("default"),

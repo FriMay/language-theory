@@ -25,14 +25,11 @@ import java.util.Date;
 public class DeviceToken implements CursoredListDTO.Entity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    @Column(name = "token")
+    private String token;
 
     @Column(name = "username")
     private String username;
-
-    @Column(name = "token")
-    private String token;
 
     @Column(name = "type")
     private String tokenType;
@@ -40,8 +37,11 @@ public class DeviceToken implements CursoredListDTO.Entity {
     @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(name = "locale_iso")
+    private String localeIso;
+
     @Override
     public String getCursor() {
-        return id.toString();
+        return token;
     }
 }

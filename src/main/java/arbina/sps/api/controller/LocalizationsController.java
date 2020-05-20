@@ -14,7 +14,6 @@ import arbina.sps.store.repository.LocalizationsRepository;
 import arbina.sps.store.repository.TemplatesRepository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
-import org.apache.tomcat.jni.Local;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -58,7 +57,7 @@ public class LocalizationsController implements DtoUtils {
         Stream<Localization> localizationsStream = localizationsRepository.fetchAllByTemplateId(templateId);
 
         CursoredListDTO<Localization, LocalizationDTO> dto = new CursoredListDTO<>(localizationsStream.iterator(),
-                        cursor, limit, LocalizationDTO::of);
+                cursor, limit, LocalizationDTO::of);
 
         return ResponseEntity.ok(dto);
     }
@@ -67,11 +66,12 @@ public class LocalizationsController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PutMapping("/api/templates/localizations/{localizationId}")
     @Secured({Authority.PUSH_MARKETING})
-    public ResponseEntity<LocalizationDTO> updateLocalization(@PathVariable Long localizationId,
-                                                              @RequestParam String title,
-                                                              @RequestParam String subtitle,
-                                                              @RequestParam String body,
-                                                              @RequestParam("locale_iso") String localeIso) {
+    public ResponseEntity<LocalizationDTO> updateLocalization(
+            @PathVariable Long localizationId,
+            @RequestParam String title,
+            @RequestParam String subtitle,
+            @RequestParam String body,
+            @RequestParam("locale_iso") String localeIso) {
 
         Localization localization = localizationsRepository.findById(localizationId).orElse(null);
         if (localization == null) {
@@ -108,11 +108,12 @@ public class LocalizationsController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PostMapping("/api/templates/{templateId}/localizations")
     @Secured({Authority.PUSH_MARKETING})
-    public ResponseEntity<LocalizationDTO> createLocalization(@PathVariable Long templateId,
-                                                              @RequestParam String title,
-                                                              @RequestParam String subtitle,
-                                                              @RequestParam String body,
-                                                              @RequestParam("locale_iso") String localeIso) {
+    public ResponseEntity<LocalizationDTO> createLocalization(
+            @PathVariable Long templateId,
+            @RequestParam String title,
+            @RequestParam String subtitle,
+            @RequestParam String body,
+            @RequestParam("locale_iso") String localeIso) {
 
         LocalizationDTO dto = LocalizationDTO.builder()
                 .templateId(templateId)
@@ -121,6 +122,8 @@ public class LocalizationsController implements DtoUtils {
                 .body(body)
                 .localeIso(localeIso)
                 .build();
+
+        validateObject(dto);
 
         Localization localization = localizationsRepository
                 .findByTemplateIdAndLocale(dto.getTemplateId(), dto.getLocaleIso()).orElse(null);

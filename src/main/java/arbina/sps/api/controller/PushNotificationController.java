@@ -3,13 +3,18 @@ package arbina.sps.api.controller;
 import arbina.infra.dto.AckDTO;
 import arbina.infra.exceptions.BadRequestException;
 import arbina.infra.exceptions.NotFoundException;
-import arbina.sps.firebase.service.PushNotificationService;
+import arbina.infra.services.id.Authority;
+import arbina.sps.config.SwaggerConfig;
+import arbina.sps.api.services.PushNotificationService;
 import arbina.sps.store.entity.Template;
 import arbina.sps.store.repository.TemplatesRepository;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.transaction.Transactional;
 
@@ -17,28 +22,35 @@ import javax.transaction.Transactional;
 @Transactional
 public class PushNotificationController {
 
-    private final PushNotificationService pushNotificationService;
-
     private final TemplatesRepository templatesRepository;
 
-    public PushNotificationController(PushNotificationService pushNotificationService,
-                                      TemplatesRepository templatesRepository) {
+    private final PushNotificationService pushNotificationService;
 
-        this.pushNotificationService = pushNotificationService;
+    public PushNotificationController(TemplatesRepository templatesRepository, PushNotificationService pushNotificationService) {
         this.templatesRepository = templatesRepository;
+        this.pushNotificationService = pushNotificationService;
     }
 
-    @PostMapping("/templates/notifications/{templateId}")
-    public ResponseEntity<AckDTO> sendDataNotification(@PathVariable Long templateId) {
+    @ApiOperation(value = "Send notification by template name.",
+            authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
+    @PostMapping("/templates/notifications")
+    @Secured({Authority.PUSH_NOTIFIER})
+    public ResponseEntity<AckDTO> sendDataNotification(
+            @RequestParam(name = "template_name") String templateName
+    ) {
 
-        if (templateId == null) {
+        if (templateName == null) {
             throw new BadRequestException("Template id can't be empty");
         }
 
-        Template template = templatesRepository.findById(templateId).orElse(null);
+        Template template = templatesRepository.findByName(templateName).orElse(null);
 
         if (template == null) {
-            throw new NotFoundException(String.format("Template #%s is not found", templateId));
+            throw new NotFoundException(String.format("Template with \"%s\" name is not found", templateName));
+        }
+
+        if (template.getLocalizations().isEmpty()){
+            throw new NotFoundException(String.format("Template with \"%s\" name is not found", templateName));
         }
 
         pushNotificationService.sendPushNotification(template);
@@ -47,3 +59,4 @@ public class PushNotificationController {
     }
 
 }
+
