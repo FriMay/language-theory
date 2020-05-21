@@ -5,6 +5,8 @@ import arbina.infra.dto.CursoredListBodyDTO;
 import arbina.infra.dto.CursoredListDTO;
 import arbina.infra.exceptions.BadRequestException;
 import arbina.infra.exceptions.NotFoundException;
+import arbina.infra.localization.LocaleDTO;
+import arbina.infra.localization.Locales;
 import arbina.infra.services.id.Authority;
 import arbina.infra.utils.DtoUtils;
 import arbina.sps.api.dto.LocalizationDTO;
@@ -150,4 +152,11 @@ public class LocalizationsController implements DtoUtils {
         return ResponseEntity.ok(new AckDTO(true));
     }
 
+    @ApiOperation(value = "Get list of supported locales.",
+            authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
+    @DeleteMapping("/api/localizations/locales")
+    @Secured({ Authority.OBSERVER })
+    public ResponseEntity<LocaleDTO[]> getLocalesList() {
+        return ResponseEntity.ok(Locales.asDtoArray);
+    }
 }
