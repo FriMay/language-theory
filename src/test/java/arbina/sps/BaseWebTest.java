@@ -1,5 +1,6 @@
 package arbina.sps;
 
+import arbina.sps.api.services.ClientsService;
 import arbina.sps.config.*;
 import arbina.sps.api.services.ApnsService;
 import arbina.sps.api.services.FcmService;
@@ -15,15 +16,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @ActiveProfiles("test")
-@RunWith(SpringRunner.class)
 @Import({
-        BaseWebContext.class,
+        JpaContext.class,
+        ArbinaInfraConfig.class,
         ResourceServerConfig.class,
         CorsConfig.class,
         PushNotificationService.class,
         FcmService.class,
-        ApnsService.class
+        ApnsService.class,
+        ClientsService.class,
+        FeignConfiguration.class
 })
+@RunWith(SpringRunner.class)
 public class BaseWebTest {
 
     public MockMvc before(WebApplicationContext webapp) {

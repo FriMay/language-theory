@@ -43,10 +43,7 @@ public class TemplatesController implements DtoUtils {
     @ApiOperation(value = "Fetch template list.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @GetMapping("/api/templates")
-    @Secured({
-            Authority.OBSERVER,
-            Authority.PUSH_MARKETING
-    })
+    @Secured({ Authority.OBSERVER })
     public ResponseEntity<CursoredListBodyDTO<TemplateDTO>> fetchTemplates(
             @RequestParam(defaultValue = "") String cursor,
             @RequestParam(defaultValue = "100") Integer limit,
@@ -71,7 +68,7 @@ public class TemplatesController implements DtoUtils {
     @ApiOperation(value = "Create a template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PostMapping("/api/templates")
-    @Secured({Authority.PUSH_MARKETING})
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<TemplateDTO> createTemplate(@RequestParam String name,
                                                       @RequestParam String description,
                                                       @RequestParam Integer badge,
@@ -103,7 +100,7 @@ public class TemplatesController implements DtoUtils {
     @ApiOperation(value = "Update a template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PutMapping("/api/templates/{templateId}")
-    @Secured({Authority.PUSH_MARKETING})
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<TemplateDTO> updateTemplate(@PathVariable Long templateId,
                                                       @RequestParam String name,
                                                       @RequestParam String description,
@@ -139,7 +136,7 @@ public class TemplatesController implements DtoUtils {
     @ApiOperation(value = "Delete a template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @DeleteMapping("/api/templates/{templateId}")
-    @Secured({Authority.PUSH_MARKETING})
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<AckDTO> deleteTemplate(@PathVariable Long templateId) {
 
         if (!templatesRepository.existsById(templateId)) {

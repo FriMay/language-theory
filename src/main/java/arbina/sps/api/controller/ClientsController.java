@@ -64,12 +64,12 @@ public class ClientsController implements DtoUtils {
 
         for (arbina.infra.services.id.dto.ClientDTO clientDto: clients.items){
 
-            Client client = clientsRepository.findById(clientDto.clientId).orElse(null);
+            Client client = clientsRepository.findById(clientDto.getClientId()).orElse(null);
 
             if (client == null){
 
                 client = Client.builder()
-                        .clientId(clientDto.clientId)
+                        .clientId(clientDto.getClientId())
                         .build();
 
                 client = clientsRepository.saveAndFlush(client);

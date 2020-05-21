@@ -47,7 +47,8 @@ public class PushNotificationService {
         this.apnsService = apnsService;
     }
 
-    public void sendPushNotification(Template template, Client client) {
+    public void sendPushNotification(Template template,
+                                     Client client) {
 
         Stream<DeviceToken> deviceTokenStream = client.getTokens().stream();
 
@@ -55,7 +56,8 @@ public class PushNotificationService {
 
             FirebaseApp app = initOrGetFirebaseApp(client);
 
-            List<ApiFuture<BatchResponse>> androidFutureResponses = fcmService.sendMessage(template, deviceTokenStream, app);
+            List<ApiFuture<BatchResponse>> androidFutureResponses =
+                    fcmService.sendMessage(template, deviceTokenStream, app);
 
             androidFutureResponses.forEach((future) -> {
                 try {
@@ -64,16 +66,14 @@ public class PushNotificationService {
                     e.printStackTrace();
                 }
             });
-
         } else {
 
             ApnsClient apnsClient = initOrGetApnsClient(client);
 
-            List<PushNotificationFuture<ApnsPushNotification, PushNotificationResponse<ApnsPushNotification>>> appleFutureResponses
-                    = apnsService.sendMessage(template, deviceTokenStream, apnsClient);
+            List<PushNotificationFuture<ApnsPushNotification, PushNotificationResponse<ApnsPushNotification>>>
+                    appleFutureResponses = apnsService.sendMessage(template, deviceTokenStream, apnsClient);
 
             appleFutureResponses.forEach(CompletableFuture::join);
-
         }
     }
 
@@ -95,14 +95,13 @@ public class PushNotificationService {
 
             } catch (IOException e) {
 
-                throw new BadRequestException(String.format("FCM client configuration with the name \"%s\" can't be exist.", client.getClientId()));
+                throw new BadRequestException(String.format("FCM client configuration " +
+                        "with name \"%s\" can't be exist.", client.getClientId()));
 
             }
-
         }
 
         return app;
-
     }
 
     private ApnsClient initOrGetApnsClient(Client client) {
@@ -126,15 +125,12 @@ public class PushNotificationService {
 
             } catch (IOException | NoSuchAlgorithmException | InvalidKeyException e) {
 
-                throw new BadRequestException(String.format("APNS client configuration with the name \"%s\" can't be exist.", client.getClientId()));
+                throw new BadRequestException(String.format("APNS client configuration " +
+                        "with name \"%s\" can't be exist.", client.getClientId()));
 
             }
-
         }
 
         return apnsClient;
-
-
     }
-
 }

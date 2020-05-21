@@ -40,11 +40,7 @@ public class LocalizationsController implements DtoUtils {
     @ApiOperation(value = "Fetch localization list for specified template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @GetMapping("/api/templates/{templateId}/localizations")
-    @Secured({
-            Authority.OBSERVER,
-            Authority.PUSH_MARKETING,
-            Authority.PUSH_NOTIFIER
-    })
+    @Secured({ Authority.OBSERVER })
     public ResponseEntity<CursoredListBodyDTO<LocalizationDTO>> fetchLocalizations(
             @PathVariable Long templateId,
             @RequestParam(defaultValue = "") String cursor,
@@ -65,7 +61,7 @@ public class LocalizationsController implements DtoUtils {
     @ApiOperation(value = "Update a template localization.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PutMapping("/api/templates/localizations/{localizationId}")
-    @Secured({Authority.PUSH_MARKETING})
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<LocalizationDTO> updateLocalization(
             @PathVariable Long localizationId,
             @RequestParam String title,
@@ -107,7 +103,7 @@ public class LocalizationsController implements DtoUtils {
     @ApiOperation(value = "Create a template localization.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PostMapping("/api/templates/{templateId}/localizations")
-    @Secured({Authority.PUSH_MARKETING})
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<LocalizationDTO> createLocalization(
             @PathVariable Long templateId,
             @RequestParam String title,
@@ -144,7 +140,7 @@ public class LocalizationsController implements DtoUtils {
     @ApiOperation(value = "Delete a template localization.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @DeleteMapping("/api/templates/localizations/{localizationId}")
-    @Secured({Authority.PUSH_MARKETING})
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<AckDTO> deleteLocalization(@PathVariable Long localizationId) {
 
         if (!localizationsRepository.existsById(localizationId)) {
