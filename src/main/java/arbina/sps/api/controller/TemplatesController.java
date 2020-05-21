@@ -45,7 +45,6 @@ public class TemplatesController implements DtoUtils {
     @GetMapping("/api/templates")
     @Secured({
             Authority.OBSERVER,
-            Authority.PUSH_MARKETING,
             Authority.PUSH_MARKETING
     })
     public ResponseEntity<CursoredListBodyDTO<TemplateDTO>> fetchTemplates(
@@ -155,5 +154,7 @@ public class TemplatesController implements DtoUtils {
     private void dtoToEntity(TemplateDTO dto, Template ent) {
         ent.setName(dto.getName());
         ent.setDescription(dto.getDescription());
+        ent.setBadge(dto.getBadge());
+        ent.setParams(dto.getParams());
     }
 }
