@@ -5,6 +5,11 @@
       org.springframework: INFO
 
   arbina:
+    infra:
+      oauth:
+        server: https://sso.arbina.com
+        client-id: arbina_infra_test
+        client-secret: ikJJWmS7cWT1
     security:
       stateless: false
 

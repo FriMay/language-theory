@@ -20,15 +20,10 @@ import java.util.stream.Stream;
 @Service
 public class ApnsService {
 
-    private final ApnsClient apnsClient;
-
-    public ApnsService(ApnsClient apnsClient) {
-        this.apnsClient = apnsClient;
-    }
-
     public List<PushNotificationFuture<ApnsPushNotification, PushNotificationResponse<ApnsPushNotification>>> sendMessage(
             Template template,
-            Stream<DeviceToken> deviceTokens) {
+            Stream<DeviceToken> deviceTokens,
+            ApnsClient apnsClient) {
 
         List<PushNotificationFuture<ApnsPushNotification, PushNotificationResponse<ApnsPushNotification>>> futures
                 = new ArrayList<>();

@@ -63,38 +63,20 @@ public class PushNotificationTest extends BaseWebTest {
         firstTemplate = templatesRepository.saveAndFlush(firstTemplate);
 
         Localization firstLocalization = Localization.builder()
-                .title("Привет Алесей!")
-                .subtitle("Ку-ку!")
-                .body("Данное сообщение должно быть отправлено на русском языке!")
+                .title("Пора спать.")
+                .subtitle("Спят усталые коммиты и PR'ы спят...")
+                .body("¯\\_(ツ)_/¯")
                 .template(firstTemplate)
                 .localeIso("ru")
-                .build();
-
-        Localization secondLocalization = Localization.builder()
-                .title("Hello Alexey!")
-                .subtitle("Ky-ky!")
-                .body("This message should be push on English language!")
-                .template(firstTemplate)
-                .localeIso("en")
                 .build();
 
         localizationsRepository.saveAndFlush(firstLocalization);
 
-        localizationsRepository.saveAndFlush(secondLocalization);
-
-        DeviceToken firstToken = DeviceToken.builder()
-                .token("dsycLQKqRN6r3L-QwenTDx:APA91bFtToX6cyxZWQY1Pi7DCArmvzO1vmj1HgoZ4l7FYo0VDEysvrLIDvaiAvfUy3Yoc0OBupLsZJGvdSDsxfdQOgmmHZBRzCTsPLa71qHxnA-7YmStM9-E2sT_VLCVbNK9HVfXUm1q")
-                .tokenType(DeviceTokenType.FCM.name())
-                .localeIso("ru")
-                .username("alexey")
-                .build();
-
-        deviceTokenRepository.saveAndFlush(firstToken);
 
         DeviceToken secondToken = DeviceToken.builder()
                 .token("f8020b06be0d4df3ea1fabb75dbcae663a7625b52618753421ca212db149ff7d")
                 .tokenType(DeviceTokenType.IOS.name())
-                .localeIso("en")
+                .localeIso("ru")
                 .username("alexey_ios")
                 .build();
 
@@ -124,7 +106,7 @@ public class PushNotificationTest extends BaseWebTest {
     @Test
     @WithMockUser(authorities = Authority.PUSH_NOTIFIER)
     public void shouldReturnOk() throws Exception {
-        mvc.perform(post("/templates/notifications")
+        mvc.perform(post("/api/templates/notifications")
                 .param("template_name", "For administrator"))
                 .andExpect(status().isOk());
     }

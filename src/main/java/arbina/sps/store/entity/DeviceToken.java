@@ -40,6 +40,13 @@ public class DeviceToken implements CursoredListDTO.Entity {
     @Column(name = "locale_iso")
     private String localeIso;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
+    private Client client;
+
+    @Column(name = "client_id", insertable = false, updatable = false)
+    private String clientId;
+
     @Override
     public String getCursor() {
         return token;

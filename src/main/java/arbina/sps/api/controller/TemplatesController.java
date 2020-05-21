@@ -64,7 +64,7 @@ public class TemplatesController implements DtoUtils {
         }
 
         CursoredListDTO<Template, TemplateDTO> dto = new CursoredListDTO<>(templatesStream.iterator(),
-                cursor, limit, TemplateDTO::of);
+                cursor, limit, TemplateDTO::of, templatesStream.count());
 
         return ResponseEntity.ok(dto);
     }
@@ -83,7 +83,8 @@ public class TemplatesController implements DtoUtils {
                 .name(name)
                 .description(description)
                 .badge(badge)
-                .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {}))
+                .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {
+                }))
                 .build();
 
         validateObject(dto);
@@ -116,7 +117,8 @@ public class TemplatesController implements DtoUtils {
                 .name(name)
                 .description(description)
                 .badge(badge)
-                .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {}))
+                .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {
+                }))
                 .build();
 
         validateObject(dto);

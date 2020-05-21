@@ -27,6 +27,11 @@
             keySetUri: https://sso.arbina.com/.well-known/jwks.json
 
   arbina:
+    infra:
+      oauth:
+        server: https://sso.arbina.com
+        client-id: sandbox_infra
+        client-secret: CvdOBKw5eYIo
     swagger:
       oauth:
         client-id: clientNoSecret

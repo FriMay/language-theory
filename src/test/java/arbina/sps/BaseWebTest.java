@@ -1,9 +1,6 @@
 package arbina.sps;
 
-import arbina.sps.config.CorsConfig;
-import arbina.sps.config.ResourceServerConfig;
-import arbina.sps.config.ApnsClientConfig;
-import arbina.sps.config.FcmClientConfig;
+import arbina.sps.config.*;
 import arbina.sps.api.services.ApnsService;
 import arbina.sps.api.services.FcmService;
 import arbina.sps.api.services.PushNotificationService;
@@ -24,9 +21,7 @@ import org.springframework.web.context.WebApplicationContext;
         ResourceServerConfig.class,
         CorsConfig.class,
         PushNotificationService.class,
-        FcmClientConfig.class,
         FcmService.class,
-        ApnsClientConfig.class,
         ApnsService.class
 })
 public class BaseWebTest {

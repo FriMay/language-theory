@@ -4,6 +4,7 @@ import arbina.sps.store.entity.DeviceToken;
 import arbina.sps.store.entity.Localization;
 import arbina.sps.store.entity.Template;
 import com.google.api.core.ApiFuture;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.*;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ import java.util.stream.Stream;
 public class FcmService {
 
 
-    public List<ApiFuture<BatchResponse>> sendMessage(Template template, Stream<DeviceToken> deviceTokens) {
+    public List<ApiFuture<BatchResponse>> sendMessage(Template template, Stream<DeviceToken> deviceTokens, FirebaseApp app) {
 
         //TODO generate topic
         String topic = "sameTopic";
@@ -28,16 +29,16 @@ public class FcmService {
         List<ApiFuture<BatchResponse>> futures = new ArrayList<>();
 
         for (MulticastMessage message: messages){
-            futures.add(sendAsyncMessage(message));
+            futures.add(sendAsyncMessage(message, app));
         }
 
         return futures;
     }
 
-    private ApiFuture<BatchResponse> sendAsyncMessage(MulticastMessage message) {
+    private ApiFuture<BatchResponse> sendAsyncMessage(MulticastMessage message, FirebaseApp app) {
 
         return FirebaseMessaging
-                .getInstance()
+                .getInstance(app)
                 .sendMulticastAsync(message);
     }
 

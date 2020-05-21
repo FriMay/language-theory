@@ -13,11 +13,7 @@ public interface DeviceTokenRepository extends JpaRepository<DeviceToken, Long> 
     Stream<DeviceToken> fetchAllSortedStream();
 
     @Query("SELECT COUNT(t) > 0 FROM DeviceToken t " +
-            "WHERE t.username = :username AND t.token = :token AND t.tokenType = :tokenType")
-    boolean isTokenExists(String username, String token, String tokenType);
+            "WHERE t.username = :username AND t.token = :token AND t.clientId = :clientId")
+    boolean isTokenExists(String username, String token, String clientId);
 
-
-    @Query("SELECT dt FROM DeviceToken dt " +
-            "WHERE dt.tokenType = :tokenType")
-    Stream<DeviceToken> fetchDeviceTokenStreamByType(String tokenType);
 }
