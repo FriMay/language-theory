@@ -154,7 +154,7 @@ public class LocalizationsController implements DtoUtils {
 
     @ApiOperation(value = "Get list of supported locales.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @DeleteMapping("/api/localizations/locales")
+    @GetMapping("/api/localizations/locales")
     @Secured({ Authority.OBSERVER })
     public ResponseEntity<LocaleDTO[]> getLocalesList() {
         return ResponseEntity.ok(Locales.asDtoArray);
