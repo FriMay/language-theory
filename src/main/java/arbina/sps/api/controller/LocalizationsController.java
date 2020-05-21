@@ -62,12 +62,11 @@ public class LocalizationsController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PutMapping("/api/templates/localizations/{localizationId}")
     @Secured({ Authority.PUSH_MARKETING })
-    public ResponseEntity<LocalizationDTO> updateLocalization(
-            @PathVariable Long localizationId,
-            @RequestParam String title,
-            @RequestParam String subtitle,
-            @RequestParam String body,
-            @RequestParam("locale_iso") String localeIso) {
+    public ResponseEntity<LocalizationDTO> updateLocalization(@PathVariable Long localizationId,
+                                                              @RequestParam String title,
+                                                              @RequestParam String subtitle,
+                                                              @RequestParam String body,
+                                                              @RequestParam("locale_iso") String localeIso) {
 
         Localization localization = localizationsRepository.findById(localizationId).orElse(null);
         if (localization == null) {
@@ -104,12 +103,11 @@ public class LocalizationsController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PostMapping("/api/templates/{templateId}/localizations")
     @Secured({ Authority.PUSH_MARKETING })
-    public ResponseEntity<LocalizationDTO> createLocalization(
-            @PathVariable Long templateId,
-            @RequestParam String title,
-            @RequestParam String subtitle,
-            @RequestParam String body,
-            @RequestParam("locale_iso") String localeIso) {
+    public ResponseEntity<LocalizationDTO> createLocalization(@PathVariable Long templateId,
+                                                              @RequestParam String title,
+                                                              @RequestParam String subtitle,
+                                                              @RequestParam String body,
+                                                              @RequestParam("locale_iso") String localeIso) {
 
         LocalizationDTO dto = LocalizationDTO.builder()
                 .templateId(templateId)
@@ -149,7 +147,7 @@ public class LocalizationsController implements DtoUtils {
 
         localizationsRepository.deleteById(localizationId);
 
-        return ResponseEntity.ok(new AckDTO());
+        return ResponseEntity.ok(new AckDTO(true));
     }
 
 }

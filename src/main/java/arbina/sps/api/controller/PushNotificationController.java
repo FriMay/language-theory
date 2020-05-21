@@ -67,7 +67,7 @@ public class PushNotificationController {
 
         pushNotificationService.sendPushNotification(template, client);
 
-        return ResponseEntity.ok(new AckDTO());
+        return ResponseEntity.ok(new AckDTO(true));
     }
 
 }

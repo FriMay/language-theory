@@ -145,7 +145,7 @@ public class TemplatesController implements DtoUtils {
 
         templatesRepository.deleteById(templateId);
 
-        return ResponseEntity.ok(new AckDTO());
+        return ResponseEntity.ok(new AckDTO(true));
     }
 
     private void dtoToEntity(TemplateDTO dto, Template ent) {

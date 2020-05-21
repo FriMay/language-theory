@@ -62,7 +62,7 @@ public class ClientsController implements DtoUtils {
 
         List<Client> clientList = new ArrayList<>();
 
-        for (arbina.infra.services.id.dto.ClientDTO clientDto: clients.items){
+        for (arbina.infra.services.id.dto.ClientDTO clientDto: clients.getItems()) {
 
             Client client = clientsRepository.findById(clientDto.getClientId()).orElse(null);
 
@@ -195,7 +195,7 @@ public class ClientsController implements DtoUtils {
 
         clientsRepository.saveAndFlush(client);
 
-        return ResponseEntity.ok(new AckDTO());
+        return ResponseEntity.ok(new AckDTO(true));
     }
 
     /**
