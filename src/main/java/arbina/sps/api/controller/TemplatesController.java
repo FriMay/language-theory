@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -46,7 +45,6 @@ public class TemplatesController implements DtoUtils {
     @GetMapping("/api/templates")
     @Secured({
             Authority.OBSERVER,
-            Authority.PUSH_MARKETING,
             Authority.PUSH_MARKETING
     })
     public ResponseEntity<CursoredListBodyDTO<TemplateDTO>> fetchTemplates(
