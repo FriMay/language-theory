@@ -52,15 +52,18 @@ public class TemplatesController implements DtoUtils {
         filter = Optional.ofNullable(filter).orElse("");
 
         Stream<Template> templatesStream;
+        Long count;
 
         if (filter.length() > 0) {
             templatesStream = templatesRepository.findLikeName(filter);
+            count = templatesRepository.countLikeName(filter);
         } else {
             templatesStream = templatesRepository.fetchAllSortedStream();
+            count = templatesRepository.count();
         }
 
         CursoredListDTO<Template, TemplateDTO> dto = new CursoredListDTO<>(templatesStream.iterator(),
-                cursor, limit, TemplateDTO::of, templatesStream.count());
+                cursor, limit, TemplateDTO::of, count);
 
         return ResponseEntity.ok(dto);
     }

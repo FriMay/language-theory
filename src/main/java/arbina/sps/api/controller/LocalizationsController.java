@@ -55,7 +55,7 @@ public class LocalizationsController implements DtoUtils {
         Stream<Localization> localizationsStream = localizationsRepository.fetchAllByTemplateId(templateId);
 
         CursoredListDTO<Localization, LocalizationDTO> dto = new CursoredListDTO<>(localizationsStream.iterator(),
-                cursor, limit, LocalizationDTO::of, localizationsStream.count());
+                cursor, limit, LocalizationDTO::of, localizationsRepository.count());
 
         return ResponseEntity.ok(dto);
     }
