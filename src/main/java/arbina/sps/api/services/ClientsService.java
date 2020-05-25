@@ -1,6 +1,7 @@
 package arbina.sps.api.services;
 
 import arbina.infra.exceptions.BadRequestException;
+import arbina.infra.exceptions.NotFoundException;
 import arbina.infra.services.id.ArbinaId;
 import arbina.sps.store.entity.Client;
 import arbina.sps.store.repository.ClientsRepository;
@@ -31,8 +32,10 @@ public class ClientsService {
             throw new BadRequestException("Client id can't be empty.");
         }
 
-        if (arbinaId.getClient(clientId) == null) {
-            throw new BadRequestException(String.format("Client with \"%s\" name is not found", clientId));
+        try{
+            arbinaId.getClient(clientId);
+        } catch (Exception e){
+            throw new NotFoundException(String.format("Client with \"%s\" name is not found", clientId));
         }
 
         Client client = clientsRepository.findById(clientId).orElse(null);

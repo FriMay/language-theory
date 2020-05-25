@@ -29,7 +29,7 @@ public class ClientsTest extends BaseWebTest {
 
     @Test
     @WithMockUser(authorities = Authority.PUSH_NOTIFIER)
-    public void shouldReturnExpectationFailed() throws Exception {
+    public void shouldReturnNotFound() throws Exception {
 
         mvc.perform(get("/api/settings/clients/{client_id}", "random_client_id"))
                 .andExpect(status().isNotFound());
