@@ -32,9 +32,9 @@ public class ClientsService {
             throw new BadRequestException("Client id can't be empty.");
         }
 
-        try{
+        try {
             arbinaId.getClient(clientId);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new NotFoundException(String.format("Client with \"%s\" name is not found", clientId));
         }
 

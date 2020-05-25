@@ -14,6 +14,8 @@ import arbina.sps.config.SwaggerConfig;
 import arbina.sps.store.entity.Localization;
 import arbina.sps.store.repository.LocalizationsRepository;
 import arbina.sps.store.repository.TemplatesRepository;
+import com.neovisionaries.i18n.LanguageAlpha3Code;
+import com.neovisionaries.i18n.LanguageCode;
 import com.neovisionaries.i18n.LocaleCode;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;

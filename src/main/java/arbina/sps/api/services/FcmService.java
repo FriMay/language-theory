@@ -67,7 +67,7 @@ public class FcmService {
 
         deviceTokens.forEach((deviceToken) -> {
 
-            String[] locales = {deviceToken.getLocaleIso(), Locales.defaultLanguageCode.getName(), template.getLocalizations().get(0).getLocaleIso()};
+            String[] locales = {deviceToken.getPreferredLanguage(), Locales.defaultLanguageCode.getName(), template.getLocalizations().get(0).getLocaleIso()};
 
             for (String locale : locales) {
 

@@ -32,6 +32,7 @@ public class Client implements CursoredListDTO.Entity {
     @Column(name = "topic")
     private String topic;
 
+    @Builder.Default
     @Column(name = "is_configurable")
     private Boolean isConfigurable = false;
 

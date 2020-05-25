@@ -60,7 +60,7 @@ public class ApnsService {
 
     private Localization getLocalization(Template template, DeviceToken deviceToken) {
 
-        String[] locales = {deviceToken.getLocaleIso(), Locales.defaultLanguageCode.getName()};
+        String[] locales = {deviceToken.getPreferredLanguage(), Locales.defaultLanguageCode.getName()};
 
         for (String locale : locales) {
 

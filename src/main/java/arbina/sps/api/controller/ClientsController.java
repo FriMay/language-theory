@@ -52,7 +52,7 @@ public class ClientsController implements DtoUtils {
 
     @ApiOperation(value = "Fetch all clients id.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @PostMapping("/api/settings/clients")
+    @GetMapping("/api/settings/clients")
     @Secured({ Authority.PUSH_NOTIFIER })
     public ResponseEntity<CursoredListBodyDTO<ClientConfigDTO>> fetchClients(
             @RequestParam(defaultValue = "", required = false) String cursor,
@@ -102,7 +102,7 @@ public class ClientsController implements DtoUtils {
     @ApiOperation(value = "Patch configurable for client.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PatchMapping("/api/settings/clients/{client_id}")
-    @Secured({ Authority.PUSH_NOTIFIER })
+    @Secured({Authority.PUSH_NOTIFIER})
     public ResponseEntity<ClientConfigDTO> patchClient(
             @PathVariable(name = "client_id") String clientId,
             @RequestParam(name = "is_configurable") Boolean isConfigurable) {

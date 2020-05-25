@@ -80,8 +80,7 @@ public class TemplatesController implements DtoUtils {
         TemplateDTO dto = TemplateDTO.builder()
                 .name(name)
                 .description(description)
-                .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {
-                }))
+                .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {}))
                 .build();
 
         validateObject(dto);
@@ -112,8 +111,7 @@ public class TemplatesController implements DtoUtils {
                 .id(templateId)
                 .name(name)
                 .description(description)
-                .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {
-                }))
+                .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {}))
                 .build();
 
         validateObject(dto);

@@ -15,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.transaction.Transactional;
@@ -42,10 +43,11 @@ public class TokensController {
             Authority.USER,
             Authority.OBSERVER
     })
-    public ResponseEntity<AckDTO> putToken(@ApiIgnore Principal principal,
-                                           @ApiIgnore OAuth2Authentication auth,
-                                           String token,
-                                           String localIso) {
+    public ResponseEntity<AckDTO> putToken(
+            @ApiIgnore Principal principal,
+            @ApiIgnore OAuth2Authentication auth,
+            String token,
+            @RequestHeader("accept-language") String language) {
 
         String clientId = auth.getOAuth2Request().getClientId();
 
@@ -55,20 +57,22 @@ public class TokensController {
             throw new BadRequestException("Wrong token");
         }
 
-        if (Optional.ofNullable(localIso).orElse("").length() == 0) {
-            throw new BadRequestException("Wrong locale iso");
+        if (Optional.ofNullable(language).orElse("").length() == 0) {
+            language = null;
         }
 
         boolean ack = false;
 
-        Optional<DeviceToken> optionalToken = tokenRepository.fetchToken(principal.getName(), token, client.getClientId());
+        Optional<DeviceToken> optionalToken = tokenRepository.fetchToken(principal.getName(),
+                token,
+                client.getClientId());
 
         if (!optionalToken.isPresent()) {
 
             DeviceToken deviceToken = DeviceToken.builder()
                     .username(principal.getName())
                     .token(token)
-                    .localeIso(localIso)
+                    .preferredLanguage(language)
                     .client(client)
                     .createdAt(new Date())
                     .build();
@@ -80,9 +84,9 @@ public class TokensController {
 
             DeviceToken ent = optionalToken.get();
 
-            if (!ent.getLocaleIso().equals(localIso)) {
+            if (!ent.getPreferredLanguage().equals(language)) {
 
-                ent.setLocaleIso(localIso);
+                ent.setPreferredLanguage(language);
 
                 ack = true;
             }
