@@ -103,7 +103,7 @@ public class TemplatesTest extends BaseWebTest {
     }
 
     @Test
-    @WithMockUser(authorities = Authority.PUSH_MARKETING)
+    @WithMockUser(authorities = Authority.OBSERVER)
     public void shouldReturnNonEmptyList() throws Exception {
 
         mvc.perform(get("/api/templates"))
@@ -112,7 +112,7 @@ public class TemplatesTest extends BaseWebTest {
     }
 
     @Test
-    @WithMockUser(authorities = Authority.PUSH_MARKETING)
+    @WithMockUser(authorities = Authority.OBSERVER)
     public void shouldReturnFilteredByNameList() throws Exception {
 
         mvc.perform(get("/api/templates")
@@ -131,6 +131,23 @@ public class TemplatesTest extends BaseWebTest {
 
         mvc.perform(put("/api/templates/{templateId}", firstTemplateId)
                 .param("name", "Changed template")
+                .param("description", "hello world")
+                .param("badge", "3")
+                .param("params_json", new ObjectMapper().writeValueAsString(params))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = Authority.PUSH_MARKETING)
+    public void shouldReturnCreatedTemplate() throws Exception {
+
+        Map<String, String> params = new HashMap<>();
+        params.put("Change", "Data");
+        params.put("Hello", "Dmitriy");
+
+        mvc.perform(post("/api/templates")
+                .param("name", "qwe")
                 .param("description", "hello world")
                 .param("badge", "3")
                 .param("params_json", new ObjectMapper().writeValueAsString(params))
