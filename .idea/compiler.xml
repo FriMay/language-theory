@@ -19,7 +19,7 @@
         <module name="arbina-sps-api.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="app-template.main" target="1.8" />
       <module name="app-template.test" target="1.8" />
       <module name="arbina-signal-api.main" target="1.8" />

@@ -7,22 +7,21 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.io.Serializable;
+import javax.persistence.Lob;
+import java.util.Date;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class Param implements Serializable {
+public class Fcm {
 
-    @Column(name = "key")
-    private String key;
+    @Lob
+    @Column(name = "fcm_config")
+    private String config;
 
-    @Column(name = "value")
-    private String value;
-
-    @Column(name = "template_id", insertable = false, updatable = false)
-    private Long templateId;
+    @Column(name = "fcm_updated_at")
+    private Date updatedAt;
 
 }

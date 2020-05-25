@@ -13,6 +13,10 @@ public interface LocalizationsRepository extends JpaRepository<Localization, Lon
             "WHERE tl.templateId = :templateId")
     Stream<Localization> fetchAllByTemplateId(Long templateId);
 
+    @Query("SELECT COUNT(tl) FROM Localization tl " +
+            "WHERE tl.templateId = :templateId")
+    Long fetchCountByTemplateId(Long templateId);
+
     @Query("SELECT tl FROM Localization tl " +
             "WHERE tl.templateId = :templateId " +
             "AND tl.localeIso = :localeIso")

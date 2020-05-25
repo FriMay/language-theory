@@ -1,34 +1,39 @@
 ---
 
-logging:
-  level:
-    org.springframework: INFO
+  logging:
+    level:
+      org.springframework: INFO
 
-server:
-  port: 9080
+  server:
+    port: 9080
 
-spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost/arbina-sps
-    username: postgres
-    password: postgres
-  jpa:
-    show-sql: false
-    hibernate:
-      ddl-auto: update
-  jackson:
-    serialization:
-      indentOutput: true
-  security:
-    oauth2:
-      resource:
-        jwk:
-          keySetUri: https://sso.arbina.com/.well-known/jwks.json
+  spring:
+    datasource:
+      driver-class-name: org.postgresql.Driver
+      url: jdbc:postgresql://localhost/arbina-sps
+      username: postgres
+      password: postgres
+    jpa:
+      show-sql: false
+      hibernate:
+        ddl-auto: update
+    jackson:
+      serialization:
+        indentOutput: true
+    security:
+      oauth2:
+        resource:
+          jwk:
+            keySetUri: https://sso.arbina.com/.well-known/jwks.json
 
-arbina:
-  swagger:
-    oauth:
-      client-id: clientNoSecret
-      client-secret:
-      server: https://sso.arbina.com
+  arbina:
+    infra:
+      oauth:
+        server: https://sso.arbina.com
+        client-id: sandbox_infra
+        client-secret: CvdOBKw5eYIo
+    swagger:
+      oauth:
+        client-id: clientNoSecret
+        client-secret:
+        server: https://sso.arbina.com

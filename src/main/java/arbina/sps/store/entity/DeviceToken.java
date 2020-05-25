@@ -25,23 +25,27 @@ import java.util.Date;
 public class DeviceToken implements CursoredListDTO.Entity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    @Column(name = "token")
+    private String token;
 
     @Column(name = "username")
     private String username;
 
-    @Column(name = "token")
-    private String token;
-
-    @Column(name = "type")
-    private String tokenType;
-
     @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(name = "locale_iso")
+    private String localeIso;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
+    private Client client;
+
+    @Column(name = "client_id", insertable = false, updatable = false)
+    private String clientId;
+
     @Override
     public String getCursor() {
-        return id.toString();
+        return token;
     }
 }

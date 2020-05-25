@@ -11,6 +11,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -27,11 +31,9 @@ public class LocalizationDTO {
     private String title;
 
     @ApiParam(required = true)
-    @ValidateField(required = true, message = "Template subtitle can't be empty.")
     private String subtitle;
 
     @ApiParam(required = true)
-    @ValidateField(required = true, message = "Template body can't be empty.")
     private String body;
 
     @JsonProperty("locale_iso")
@@ -56,4 +58,8 @@ public class LocalizationDTO {
                 .build();
     }
 
+    public static List<LocalizationDTO> of(Stream<Localization> localizations) {
+
+        return localizations.map(LocalizationDTO::of).collect(Collectors.toList());
+    }
 }

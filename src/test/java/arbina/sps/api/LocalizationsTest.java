@@ -3,8 +3,8 @@ package arbina.sps.api;
 import arbina.infra.services.id.Authority;
 import arbina.sps.BaseWebTest;
 import arbina.sps.api.controller.LocalizationsController;
-import arbina.sps.store.entity.Template;
 import arbina.sps.store.entity.Localization;
+import arbina.sps.store.entity.Template;
 import arbina.sps.store.repository.LocalizationsRepository;
 import arbina.sps.store.repository.TemplatesRepository;
 import org.apache.logging.log4j.LogManager;
@@ -93,10 +93,10 @@ public class LocalizationsTest extends BaseWebTest {
     }
 
     @Test
-    @WithMockUser(authorities = Authority.PUSH_MARKETING)
+    @WithMockUser(authorities = Authority.OBSERVER)
     public void shouldReturnNonEmptyList() throws Exception {
 
-        mvc.perform(get("/api/templates/{templateId}/localizations", firstTemplateId))
+        mvc.perform(get("/api/templates/{template_id}/localizations", firstTemplateId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items").isNotEmpty());
     }
@@ -105,10 +105,10 @@ public class LocalizationsTest extends BaseWebTest {
     @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnCreatedTemplateLocalization() throws Exception {
 
-        mvc.perform(post("/api/templates/{templateId}/localizations", firstTemplateId)
+        mvc.perform(post("/api/templates/{template_id}/localizations", firstTemplateId)
                 .param("title", "Some subject")
-                .param("subtitle", "Do you like {{ cookie_name }}?")
-                .param("body", "<h1>Do you like {{ cookie_name }}?</h1>")
+//                .param("subtitle", "Do you like {{ cookie_name }}?")
+//                .param("body", "<h1>Do you like {{ cookie_name }}?</h1>")
                 .param("locale_iso", "eu")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -118,7 +118,7 @@ public class LocalizationsTest extends BaseWebTest {
     @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnBadRequestOnCreate() throws Exception {
 
-        mvc.perform(post("/api/templates/{templateId}/localizations", firstTemplateId)
+        mvc.perform(post("/api/templates/{template_id}/localizations", firstTemplateId)
                 .param("title", "Bad template")
                 .param("subtitle", "Do you like a {{ bad_request }}?")
                 .param("body", "<h1>Do you like a {{ bad_request }}?</h1>")
@@ -131,7 +131,7 @@ public class LocalizationsTest extends BaseWebTest {
     @WithMockUser(authorities = Authority.PUSH_MARKETING)
     public void shouldReturnUpdatedTemplateLocalization() throws Exception {
 
-        mvc.perform(put("/api/templates/localizations/{localizationId}", firstLocalizationId)
+        mvc.perform(put("/api/templates/localizations/{localization_id}", firstLocalizationId)
                 .param("title", "New subject")
                 .param("subtitle", "How about {{ lemonade_name }}?")
                 .param("body", "<h1>How about {{ lemonade_name }}?</h1>")
@@ -151,10 +151,9 @@ public class LocalizationsTest extends BaseWebTest {
         jsonObject.put("template_id", firstTemplateId);
         jsonObject.put("locale_iso", "eu");
 
-        mvc.perform(put("/api/templates/localizations/{localizationId}", firstLocalizationId)
+        mvc.perform(put("/api/templates/localizations/{localization_id}", firstLocalizationId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObject.toString()))
                 .andExpect(status().isBadRequest());
     }
-
 }

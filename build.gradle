@@ -44,7 +44,7 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.12'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
 
-    implementation group: 'arbina.infra.sdk', name: 'java', version: '0.0.10'
+    implementation group: 'arbina.infra.sdk', name: 'java', version: '0.0.12.17'
 
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
@@ -64,8 +64,15 @@ dependencies {
     implementation group: 'org.springframework', name: 'spring-messaging', version: springFrameworkVersion
     implementation group: 'org.springframework.security', name: 'spring-security-messaging', version: springSecurityVersion
 
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.2.RELEASE'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-security', version: '2.2.1.RELEASE'
+
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: springFoxSwaggerVersion
     implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: springFoxSwaggerVersion
+
+    implementation group: 'com.google.firebase', name: 'firebase-admin', version: '6.13.0'
+
+    implementation group: 'com.eatthepath', name: 'pushy', version: '0.14.0'
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation group: 'org.springframework.security', name: 'spring-security-test'

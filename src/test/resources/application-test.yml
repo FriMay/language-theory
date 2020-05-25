@@ -5,10 +5,17 @@
       org.springframework: INFO
 
   arbina:
+    infra:
+      oauth:
+        server: https://sso.arbina.com
+        client-id: arbina_infra_test
+        client-secret: ikJJWmS7cWT1
     security:
       stateless: false
 
   spring:
+    main:
+      allow-bean-definition-overriding: true
     datasource:
       driverClassName: org.h2.Driver
       url: jdbc:h2:mem:test-db;DB_CLOSE_DELAY=-1

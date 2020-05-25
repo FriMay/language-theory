@@ -49,6 +49,7 @@ public class Localization implements CursoredListDTO.Entity {
     }
 
     public static void fromDTO(LocalizationDTO dto, Localization ent, TemplatesRepository templatesRepository) {
+
         ent.setTitle(dto.getTitle());
         ent.setSubtitle(dto.getSubtitle());
         ent.setBody(dto.getBody());

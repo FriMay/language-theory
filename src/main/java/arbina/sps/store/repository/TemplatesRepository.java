@@ -25,7 +25,7 @@ public interface TemplatesRepository extends JpaRepository<Template, Long> {
 
     @Query("SELECT COUNT(t) FROM Template t " +
             "WHERE LOWER(t.name) LIKE LOWER(CONCAT('%',:templateName,'%') ) ")
-    Optional<Integer> countLikeName(String templateName);
+    Long countLikeName(String templateName);
 
     @Modifying
     @Query("UPDATE Template t " +

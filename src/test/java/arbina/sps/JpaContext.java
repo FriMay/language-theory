@@ -5,6 +5,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EnableJpaRepositories(basePackages = "arbina")
 @DataJpaTest
-public class BaseWebContext {
-
+public class JpaContext {
 }

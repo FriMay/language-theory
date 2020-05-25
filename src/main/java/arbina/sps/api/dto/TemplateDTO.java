@@ -11,7 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
 
 @Data
 @Builder
@@ -32,9 +33,6 @@ public class TemplateDTO {
     @ValidateField(required = true, message = "Template description can't be empty.")
     private String description;
 
-    @ApiParam(required = true)
-    private Integer badge;
-
     @JsonProperty("created_at")
     private Date createdAt;
 
@@ -44,7 +42,10 @@ public class TemplateDTO {
     @JsonProperty("last_used_at")
     private Date lastUsedAt;
 
-    private Map<String, String> params = new HashMap<>();
+    @JsonProperty("localizations_count")
+    private Integer localizationsCount;
+
+    private Map<String, String> params;
 
     public static TemplateDTO of(Template ent) {
 
@@ -55,8 +56,8 @@ public class TemplateDTO {
                 .createdAt(ent.getCreatedAt())
                 .updatedAt(ent.getUpdatedAt())
                 .lastUsedAt(ent.getLastUsedAt())
-                .badge(ent.getBadge())
                 .params(ent.getParams())
+                .localizationsCount(ent.getLocalizations().size())
                 .build();
     }
 }

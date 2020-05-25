@@ -17,21 +17,18 @@ import lombok.NoArgsConstructor;
 @ApiModel(description = "Describes device token.")
 public class TokenDTO {
 
-    private Long id;
-
     @JsonProperty("device_token")
     private String token;
 
-    @JsonProperty("token_type")
-    private String tokenType;
+    @JsonProperty("locale_iso")
+    private String localeIso;
 
     public static TokenDTO of(DeviceToken ent) {
 
         return TokenDTO
                 .builder()
-                .id(ent.getId())
                 .token(ent.getToken())
-                .tokenType(ent.getTokenType())
+                .localeIso(ent.getLocaleIso())
                 .build();
     }
 }
