@@ -19,7 +19,9 @@ import java.util.stream.Stream;
 public class FcmService {
 
 
-    public List<ApiFuture<BatchResponse>> sendMessage(Template template, Stream<DeviceToken> deviceTokens, FirebaseApp app) {
+    public List<ApiFuture<BatchResponse>> sendMessage(Template template,
+                                                      Stream<DeviceToken> deviceTokens,
+                                                      FirebaseApp app) {
 
         //TODO generate topic
         String topic = "sameTopic";
@@ -35,7 +37,8 @@ public class FcmService {
         return futures;
     }
 
-    private ApiFuture<BatchResponse> sendAsyncMessage(MulticastMessage message, FirebaseApp app) {
+    private ApiFuture<BatchResponse> sendAsyncMessage(MulticastMessage message,
+                                                      FirebaseApp app) {
 
         return FirebaseMessaging
                 .getInstance(app)
@@ -51,7 +54,8 @@ public class FcmService {
                         .setColor(NotificationParameter.COLOR.getValue()).setTag(topic).build()).build();
     }
 
-    private ApnsConfig getApnsConfig(Template template, String topic) {
+    private ApnsConfig getApnsConfig(Template template,
+                                     String topic) {
 
         return ApnsConfig.builder()
                 .setAps(Aps
@@ -63,7 +67,9 @@ public class FcmService {
                 .build();
     }
 
-    private List<MulticastMessage> getMulticastMessageList(Template template, Stream<DeviceToken> deviceTokens, String topic) {
+    private List<MulticastMessage> getMulticastMessageList(Template template,
+                                                           Stream<DeviceToken> deviceTokens,
+                                                           String topic) {
 
         Map<String, MulticastMessage.Builder> localeMulticastMessage = new HashMap<>();
 

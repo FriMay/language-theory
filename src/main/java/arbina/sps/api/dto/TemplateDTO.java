@@ -44,6 +44,9 @@ public class TemplateDTO {
     @JsonProperty("last_used_at")
     private Date lastUsedAt;
 
+    @JsonProperty("localizations_count")
+    private Integer localizationsCount;
+
     private Map<String, String> params;
 
     public static TemplateDTO of(Template ent) {
@@ -57,6 +60,7 @@ public class TemplateDTO {
                 .lastUsedAt(ent.getLastUsedAt())
                 .badge(ent.getBadge())
                 .params(ent.getParams())
+                .localizationsCount(ent.getLocalizations().size())
                 .build();
     }
 }

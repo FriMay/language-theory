@@ -6,7 +6,6 @@ import arbina.sps.store.entity.Client;
 import arbina.sps.store.repository.ClientsRepository;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class ClientsService {
 
@@ -14,7 +13,8 @@ public class ClientsService {
 
     private final ArbinaId arbinaId;
 
-    public ClientsService(ClientsRepository clientsRepository, ArbinaId arbinaId) {
+    public ClientsService(ClientsRepository clientsRepository,
+                          ArbinaId arbinaId) {
         this.clientsRepository = clientsRepository;
         this.arbinaId = arbinaId;
     }
@@ -27,7 +27,7 @@ public class ClientsService {
      */
     public Client validateAndGetClient(String clientId) {
 
-        if (clientId == null){
+        if (clientId == null) {
             throw new BadRequestException("Client id can't be empty.");
         }
 

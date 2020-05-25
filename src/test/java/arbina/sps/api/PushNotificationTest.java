@@ -100,15 +100,14 @@ public class PushNotificationTest extends BaseWebTest {
             isDataSetup = true;
             initData();
         }
-
     }
 
     @Test
     @WithMockUser(authorities = Authority.PUSH_NOTIFIER)
     public void shouldReturnOk() throws Exception {
         mvc.perform(post("/api/templates/notifications")
-                .param("template_name", "For administrator"))
+                .param("template_name", "For administrator")
+                .param("client_id", "ios_test_client"))
                 .andExpect(status().isOk());
     }
-
 }

@@ -30,7 +30,9 @@ public class PushNotificationController {
 
     private final ClientsService clientsService;
 
-    public PushNotificationController(TemplatesRepository templatesRepository, PushNotificationService pushNotificationService, ClientsService clientsService) {
+    public PushNotificationController(TemplatesRepository templatesRepository,
+                                      PushNotificationService pushNotificationService,
+                                      ClientsService clientsService) {
         this.templatesRepository = templatesRepository;
         this.pushNotificationService = pushNotificationService;
         this.clientsService = clientsService;
@@ -39,11 +41,9 @@ public class PushNotificationController {
     @ApiOperation(value = "Send notification by template name.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PostMapping("/api/templates/notifications")
-    @Secured({Authority.PUSH_NOTIFIER})
-    public ResponseEntity<AckDTO> sendDataNotification(
-            @RequestParam(name = "template_name") String templateName,
-            @RequestParam(name = "client_id") String clientId
-    ) {
+    @Secured({ Authority.PUSH_NOTIFIER })
+    public ResponseEntity<AckDTO> sendDataNotification(@RequestParam(name = "template_name") String templateName,
+                                                       @RequestParam(name = "client_id") String clientId) {
 
         if (templateName == null) {
             throw new BadRequestException("Template id can't be empty");
@@ -67,7 +67,7 @@ public class PushNotificationController {
 
         pushNotificationService.sendPushNotification(template, client);
 
-        return ResponseEntity.ok(new AckDTO());
+        return ResponseEntity.ok(new AckDTO(true));
     }
 
 }

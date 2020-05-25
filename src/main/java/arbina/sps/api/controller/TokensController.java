@@ -38,7 +38,10 @@ public class TokensController {
     @ApiOperation(value = "Put device token.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PutMapping("/api/tokens")
-    @Secured({Authority.USER, Authority.OBSERVER})
+    @Secured({
+            Authority.USER,
+            Authority.OBSERVER
+    })
     public ResponseEntity<AckDTO> putToken(@ApiIgnore Principal principal,
                                            @ApiIgnore OAuth2Authentication auth,
                                            String token,
