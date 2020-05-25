@@ -31,11 +31,9 @@ public class LocalizationDTO {
     private String title;
 
     @ApiParam(required = true)
-    @ValidateField(required = true, message = "Template subtitle can't be empty.")
     private String subtitle;
 
     @ApiParam(required = true)
-    @ValidateField(required = true, message = "Template body can't be empty.")
     private String body;
 
     @JsonProperty("locale_iso")

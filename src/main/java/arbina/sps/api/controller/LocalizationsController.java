@@ -69,11 +69,12 @@ public class LocalizationsController implements DtoUtils {
     @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<LocalizationDTO> updateLocalization(@PathVariable(name = "localization_id") Long localizationId,
                                                               @RequestParam String title,
-                                                              @RequestParam String subtitle,
-                                                              @RequestParam String body,
+                                                              @RequestParam(required = false) String subtitle,
+                                                              @RequestParam(required = false) String body,
                                                               @RequestParam("locale_iso") String localeIso) {
 
         Localization localization = localizationsRepository.findById(localizationId).orElse(null);
+
         if (localization == null) {
             throw new BadRequestException("Locale is not exist.");
         }
@@ -91,6 +92,7 @@ public class LocalizationsController implements DtoUtils {
 
         Localization ent = localizationsRepository.findByTemplateIdAndLocale(dto.getTemplateId(), dto.getLocaleIso())
                 .orElse(null);
+
         if (ent == null) {
             throw new BadRequestException("Template is not exist");
         } else if (!Objects.equals(ent.getId(), dto.getId())) {
@@ -110,8 +112,8 @@ public class LocalizationsController implements DtoUtils {
     @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<LocalizationDTO> createLocalization(@PathVariable(name = "template_id") Long templateId,
                                                               @RequestParam String title,
-                                                              @RequestParam String subtitle,
-                                                              @RequestParam String body,
+                                                              @RequestParam(required = false) String subtitle,
+                                                              @RequestParam(required = false) String body,
                                                               @RequestParam("locale_iso") String localeIso) {
 
         LocalizationDTO dto = LocalizationDTO.builder()

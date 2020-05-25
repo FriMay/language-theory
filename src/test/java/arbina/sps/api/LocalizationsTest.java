@@ -107,8 +107,8 @@ public class LocalizationsTest extends BaseWebTest {
 
         mvc.perform(post("/api/templates/{template_id}/localizations", firstTemplateId)
                 .param("title", "Some subject")
-                .param("subtitle", "Do you like {{ cookie_name }}?")
-                .param("body", "<h1>Do you like {{ cookie_name }}?</h1>")
+//                .param("subtitle", "Do you like {{ cookie_name }}?")
+//                .param("body", "<h1>Do you like {{ cookie_name }}?</h1>")
                 .param("locale_iso", "eu")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
