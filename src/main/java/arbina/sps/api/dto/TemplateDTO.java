@@ -1,5 +1,6 @@
 package arbina.sps.api.dto;
 
+import arbina.infra.localization.Locales;
 import arbina.infra.utils.ValidateField;
 import arbina.sps.store.entity.Template;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -42,6 +43,10 @@ public class TemplateDTO {
     @JsonProperty("last_used_at")
     private Date lastUsedAt;
 
+    @Builder.Default
+    @JsonProperty("locales_count")
+    private Integer localesCount = Locales.asArray.length;
+
     @JsonProperty("localizations_count")
     private Integer localizationsCount;
 
@@ -57,7 +62,7 @@ public class TemplateDTO {
                 .updatedAt(ent.getUpdatedAt())
                 .lastUsedAt(ent.getLastUsedAt())
                 .params(ent.getParams())
-                .localizationsCount(ent.getLocalizations() == null? 0 : ent.getLocalizations().size())
+                .localizationsCount(ent.getLocalizations() == null ? 0 : ent.getLocalizations().size())
                 .build();
     }
 }

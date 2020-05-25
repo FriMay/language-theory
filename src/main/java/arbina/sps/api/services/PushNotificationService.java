@@ -47,8 +47,7 @@ public class PushNotificationService {
         this.apnsService = apnsService;
     }
 
-    public void sendPushNotification(Template template,
-                                     Client client) {
+    public void sendPushNotification(Template template, Client client) {
 
         Stream<DeviceToken> deviceTokenStream = client.getTokens().stream();
 
