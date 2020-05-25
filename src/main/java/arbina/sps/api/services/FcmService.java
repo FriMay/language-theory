@@ -10,10 +10,7 @@ import com.google.firebase.messaging.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
@@ -22,10 +19,9 @@ public class FcmService {
 
     public List<ApiFuture<BatchResponse>> sendMessage(Template template,
                                                       Stream<DeviceToken> deviceTokens,
-                                                      FirebaseApp app,
-                                                      String topic) {
+                                                      FirebaseApp app) {
 
-        List<MulticastMessage> messages = getMulticastMessageList(template, deviceTokens, topic);
+        List<MulticastMessage> messages = getMulticastMessageList(template, deviceTokens);
 
         List<ApiFuture<BatchResponse>> futures = new ArrayList<>();
 
@@ -44,29 +40,30 @@ public class FcmService {
                 .sendMulticastAsync(message);
     }
 
-    private AndroidConfig getAndroidConfig(String topic) {
+    private AndroidConfig getAndroidConfig() {
+
+        String randomTopic = UUID.randomUUID().toString();
 
         return AndroidConfig.builder()
                 .setTtl(Duration.ofMinutes(2).toMillis())
-                .setCollapseKey(topic)
+                .setCollapseKey(randomTopic)
                 .setPriority(AndroidConfig.Priority.HIGH)
                 .setNotification(
                         AndroidNotification
                                 .builder()
                                 .setSound(NotificationParameter.SOUND.getValue())
                                 .setColor(NotificationParameter.COLOR.getValue())
-                                .setTag(topic)
+                                .setTag(randomTopic)
                                 .build())
                 .build();
     }
 
     private List<MulticastMessage> getMulticastMessageList(Template template,
-                                                           Stream<DeviceToken> deviceTokens,
-                                                           String topic) {
+                                                           Stream<DeviceToken> deviceTokens) {
 
         Map<String, MulticastMessage.Builder> localeMulticastMessage = new HashMap<>();
 
-        AndroidConfig androidConfig = getAndroidConfig(topic);
+        AndroidConfig androidConfig = getAndroidConfig();
 
         deviceTokens.forEach((deviceToken) -> {
 

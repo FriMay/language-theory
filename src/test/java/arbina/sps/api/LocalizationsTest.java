@@ -66,7 +66,7 @@ public class LocalizationsTest extends BaseWebTest {
                 .subtitle("Hello message.")
                 .body("Our app has been updated, come soon!")
                 .template(firstTemplate)
-                .localeIso("ru")
+                .localeIso("ru_RU")
                 .build();
 
         Localization secondeLocalization = Localization.builder()
@@ -74,7 +74,7 @@ public class LocalizationsTest extends BaseWebTest {
                 .subtitle("Hello message.")
                 .body("Our app has been updated, come soon!")
                 .template(firstTemplate)
-                .localeIso("en")
+                .localeIso("en_US")
                 .build();
 
         firstLocalizationId = localizationsRepository.saveAndFlush(firstLocalization).getId();
@@ -109,22 +109,22 @@ public class LocalizationsTest extends BaseWebTest {
                 .param("title", "Some subject")
 //                .param("subtitle", "Do you like {{ cookie_name }}?")
 //                .param("body", "<h1>Do you like {{ cookie_name }}?</h1>")
-                .param("locale_iso", "eu")
+                .param("locale_iso", "en_CA")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(authorities = Authority.PUSH_MARKETING)
-    public void shouldReturnBadRequestOnCreate() throws Exception {
+    public void shouldReturnNotFoundOnCreate() throws Exception {
 
         mvc.perform(post("/api/templates/{template_id}/localizations", firstTemplateId)
                 .param("title", "Bad template")
                 .param("subtitle", "Do you like a {{ bad_request }}?")
                 .param("body", "<h1>Do you like a {{ bad_request }}?</h1>")
-                .param("locale_iso", "eu")
+                .param("locale_iso", "en_U")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class LocalizationsTest extends BaseWebTest {
                 .param("subtitle", "How about {{ lemonade_name }}?")
                 .param("body", "<h1>How about {{ lemonade_name }}?</h1>")
                 .param("template_id", String.valueOf(firstTemplateId))
-                .param("locale_iso", "ru")
+                .param("locale_iso", "ru_RU")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -149,7 +149,7 @@ public class LocalizationsTest extends BaseWebTest {
         jsonObject.put("subtitle", "How about {{ bad_request }}?");
         jsonObject.put("body", "<h1>How about {{ bad_request }}?</h1>");
         jsonObject.put("template_id", firstTemplateId);
-        jsonObject.put("locale_iso", "eu");
+        jsonObject.put("locale_iso", "en_US");
 
         mvc.perform(put("/api/templates/localizations/{localization_id}", firstLocalizationId)
                 .contentType(MediaType.APPLICATION_JSON)

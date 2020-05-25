@@ -57,7 +57,7 @@ public class PushNotificationService {
             FirebaseApp app = initOrGetFirebaseApp(client);
 
             List<ApiFuture<BatchResponse>> androidFutureResponses =
-                    fcmService.sendMessage(template, deviceTokenStream, app, client.getTopic());
+                    fcmService.sendMessage(template, deviceTokenStream, app);
 
             androidFutureResponses.forEach((future) -> {
                 try {

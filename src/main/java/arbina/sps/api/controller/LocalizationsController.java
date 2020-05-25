@@ -14,6 +14,7 @@ import arbina.sps.config.SwaggerConfig;
 import arbina.sps.store.entity.Localization;
 import arbina.sps.store.repository.LocalizationsRepository;
 import arbina.sps.store.repository.TemplatesRepository;
+import com.neovisionaries.i18n.LocaleCode;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -90,6 +92,8 @@ public class LocalizationsController implements DtoUtils {
 
         validateObject(dto);
 
+        validateLocaleIso(localeIso);
+
         Localization ent = localizationsRepository.findByTemplateIdAndLocale(dto.getTemplateId(), dto.getLocaleIso())
                 .orElse(null);
 
@@ -125,6 +129,8 @@ public class LocalizationsController implements DtoUtils {
                 .build();
 
         validateObject(dto);
+
+        validateLocaleIso(localeIso);
 
         Localization localization = localizationsRepository
                 .findByTemplateIdAndLocale(dto.getTemplateId(), dto.getLocaleIso()).orElse(null);
@@ -163,5 +169,14 @@ public class LocalizationsController implements DtoUtils {
     @Secured({ Authority.OBSERVER })
     public ResponseEntity<LocaleDTO[]> getLocalesList() {
         return ResponseEntity.ok(Locales.asDtoArray);
+    }
+
+    private void validateLocaleIso(String localeIso){
+
+        try {
+            LocaleCode.valueOf(localeIso);
+        }catch (Exception e){
+            throw new NotFoundException(String.format("Locale with \"%s\" locale iso doesn't exist.", localeIso));
+        }
     }
 }

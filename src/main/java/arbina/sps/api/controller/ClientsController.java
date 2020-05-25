@@ -122,14 +122,7 @@ public class ClientsController implements DtoUtils {
     @Secured({ Authority.PUSH_NOTIFIER })
     public ResponseEntity<FcmDTO> patchFcm(
             @PathVariable(name = "client_id") String clientId,
-            @RequestParam(name = "configuration_file") MultipartFile configurationFile,
-            @RequestParam String topic) {
-
-        topic = Optional.ofNullable(topic).orElse("");
-
-        if (topic.length() == 0) {
-            throw new BadRequestException("Topic can't be empty.");
-        }
+            @RequestParam(name = "configuration_file") MultipartFile configurationFile) {
 
         Client client = clientsService.validateAndGetClient(clientId);
 
@@ -142,7 +135,6 @@ public class ClientsController implements DtoUtils {
 
         client.setFcm(fcm);
         client.setIsConfigurable(true);
-        client.setTopic(topic);
 
         client = clientsRepository.saveAndFlush(client);
 

@@ -57,7 +57,7 @@ public class TemplateDTO {
                 .updatedAt(ent.getUpdatedAt())
                 .lastUsedAt(ent.getLastUsedAt())
                 .params(ent.getParams())
-                .localizationsCount(ent.getLocalizations().size())
+                .localizationsCount(ent.getLocalizations() == null? 0 : ent.getLocalizations().size())
                 .build();
     }
 }
