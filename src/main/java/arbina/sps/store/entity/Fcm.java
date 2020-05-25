@@ -5,7 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 import java.util.Date;
 
 @Data
@@ -15,6 +17,7 @@ import java.util.Date;
 @Embeddable
 public class Fcm {
 
+    @Lob
     @Column(name = "fcm_config")
     private String config;
 

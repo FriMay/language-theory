@@ -31,9 +31,6 @@ public class DeviceToken implements CursoredListDTO.Entity {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "type")
-    private String tokenType;
-
     @Column(name = "created_at")
     private Date createdAt;
 

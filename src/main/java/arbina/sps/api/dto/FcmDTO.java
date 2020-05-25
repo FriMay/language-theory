@@ -20,7 +20,7 @@ public class FcmDTO {
     @JsonProperty("updated_at")
     private Date updatedAt;
 
-    public static FcmDTO of(Fcm ent){
+    public static FcmDTO of(Fcm ent) {
 
         return FcmDTO.builder()
                 .updatedAt(ent.getUpdatedAt())

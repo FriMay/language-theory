@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "Describes client.")
-public class ClientDTO {
+public class ClientConfigDTO {
 
     @JsonProperty("client_id")
     private String clientId;
@@ -25,15 +25,18 @@ public class ClientDTO {
 
     private FcmDTO fcm;
 
+    private String topic;
+
     @JsonProperty("is_configurable")
     private Boolean isConfigurable;
 
-    public static ClientDTO of(Client ent){
+    public static ClientConfigDTO of(Client ent) {
 
-        return ClientDTO.builder()
+        return ClientConfigDTO.builder()
                 .clientId(ent.getClientId())
                 .apns(ApnsDTO.of(ent.getApns()))
                 .fcm(FcmDTO.of(ent.getFcm()))
+                .topic(ent.getTopic())
                 .isConfigurable(ent.getIsConfigurable())
                 .build();
     }

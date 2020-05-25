@@ -37,7 +37,7 @@ public class ApnsDTO {
     @JsonProperty("updated_at")
     private Date updatedAt;
 
-    public static ApnsDTO of(Apns ent){
+    public static ApnsDTO of(Apns ent) {
 
         return ApnsDTO.builder()
                 .teamId(ent.getTeamId())

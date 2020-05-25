@@ -74,14 +74,12 @@ public class TemplatesController implements DtoUtils {
     @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<TemplateDTO> createTemplate(@RequestParam String name,
                                                       @RequestParam String description,
-                                                      @RequestParam Integer badge,
                                                       @RequestParam("params_json") String paramsJson)
             throws JsonProcessingException {
 
         TemplateDTO dto = TemplateDTO.builder()
                 .name(name)
                 .description(description)
-                .badge(badge)
                 .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {
                 }))
                 .build();
@@ -90,7 +88,7 @@ public class TemplatesController implements DtoUtils {
 
         Template ent = new Template();
 
-        dtoToEntity(dto, ent);
+        Template.fromDTO(dto, ent);
 
         ent.setCreatedAt(new Date());
         ent.setUpdatedAt(new Date());
@@ -102,12 +100,11 @@ public class TemplatesController implements DtoUtils {
 
     @ApiOperation(value = "Update a template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @PutMapping("/api/templates/{templateId}")
+    @PutMapping("/api/templates/{template_id}")
     @Secured({ Authority.PUSH_MARKETING })
-    public ResponseEntity<TemplateDTO> updateTemplate(@PathVariable Long templateId,
+    public ResponseEntity<TemplateDTO> updateTemplate(@PathVariable(name = "template_id") Long templateId,
                                                       @RequestParam String name,
                                                       @RequestParam String description,
-                                                      @RequestParam Integer badge,
                                                       @RequestParam("params_json") String paramsJson)
             throws JsonProcessingException {
 
@@ -115,7 +112,6 @@ public class TemplatesController implements DtoUtils {
                 .id(templateId)
                 .name(name)
                 .description(description)
-                .badge(badge)
                 .params(mapper.readValue(paramsJson, new TypeReference<HashMap<String, String>>() {
                 }))
                 .build();
@@ -127,7 +123,7 @@ public class TemplatesController implements DtoUtils {
             throw new NotFoundException(String.format("Template #%s is not found", templateId));
         }
 
-        dtoToEntity(dto, ent);
+        Template.fromDTO(dto, ent);
 
         ent.setUpdatedAt(new Date());
 
@@ -138,9 +134,9 @@ public class TemplatesController implements DtoUtils {
 
     @ApiOperation(value = "Delete a template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @DeleteMapping("/api/templates/{templateId}")
+    @DeleteMapping("/api/templates/{template_id}")
     @Secured({ Authority.PUSH_MARKETING })
-    public ResponseEntity<AckDTO> deleteTemplate(@PathVariable Long templateId) {
+    public ResponseEntity<AckDTO> deleteTemplate(@PathVariable(name = "template_id") Long templateId) {
 
         if (!templatesRepository.existsById(templateId)) {
             throw new NotFoundException(String.format("Template \"%s\" is not exist", templateId));
@@ -149,12 +145,5 @@ public class TemplatesController implements DtoUtils {
         templatesRepository.deleteById(templateId);
 
         return ResponseEntity.ok(new AckDTO(true));
-    }
-
-    private void dtoToEntity(TemplateDTO dto, Template ent) {
-        ent.setName(dto.getName());
-        ent.setDescription(dto.getDescription());
-        ent.setBadge(dto.getBadge());
-        ent.setParams(dto.getParams());
     }
 }

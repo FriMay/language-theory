@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 import java.util.Date;
 
 @Data
@@ -16,8 +18,9 @@ import java.util.Date;
 @Embeddable
 public class Apns {
 
-    @Column(name = "apns_config")
-    private String config;
+    @Lob
+    @Column(name = "apns_certificate")
+    private String apnsCertificate;
 
     @Column(name = "team_id")
     private String teamId;
@@ -31,7 +34,7 @@ public class Apns {
     @Column(name = "apns_updated_at")
     private Date updatedAt;
 
-    public static Apns of(ApnsDTO dto){
+    public static Apns of(ApnsDTO dto) {
 
         return Apns.builder()
                 .teamId(dto.getTeamId())

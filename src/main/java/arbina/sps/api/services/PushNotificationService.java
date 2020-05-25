@@ -57,7 +57,7 @@ public class PushNotificationService {
             FirebaseApp app = initOrGetFirebaseApp(client);
 
             List<ApiFuture<BatchResponse>> androidFutureResponses =
-                    fcmService.sendMessage(template, deviceTokenStream, app);
+                    fcmService.sendMessage(template, deviceTokenStream, app, client.getTopic());
 
             androidFutureResponses.forEach((future) -> {
                 try {
@@ -71,7 +71,8 @@ public class PushNotificationService {
             ApnsClient apnsClient = initOrGetApnsClient(client);
 
             List<PushNotificationFuture<ApnsPushNotification, PushNotificationResponse<ApnsPushNotification>>>
-                    appleFutureResponses = apnsService.sendMessage(template, deviceTokenStream, apnsClient);
+                    appleFutureResponses = apnsService
+                    .sendMessage(template, deviceTokenStream, apnsClient, client.getTopic());
 
             appleFutureResponses.forEach(CompletableFuture::join);
         }
@@ -79,9 +80,13 @@ public class PushNotificationService {
 
     private FirebaseApp initOrGetFirebaseApp(Client client) {
 
-        FirebaseApp app = FirebaseApp.getInstance(client.getClientId());
+        FirebaseApp app;
 
-        if (app == null) {
+        try {
+
+            app = FirebaseApp.getInstance(client.getClientId());
+
+        } catch (IllegalStateException ise) {
 
             try {
 
@@ -93,7 +98,7 @@ public class PushNotificationService {
 
                 return FirebaseApp.initializeApp(options, client.getClientId());
 
-            } catch (IOException e) {
+            } catch (IOException ioe) {
 
                 throw new BadRequestException(String.format("FCM client configuration " +
                         "with name \"%s\" can't be exist.", client.getClientId()));
@@ -108,11 +113,11 @@ public class PushNotificationService {
 
         ApnsClient apnsClient = apnsClients.get(client.getClientId());
 
-        if (apnsClient == null){
+        if (apnsClient == null) {
 
             try {
 
-                InputStream is = new ByteArrayInputStream(client.getApns().getConfig().getBytes());
+                InputStream is = new ByteArrayInputStream(client.getApns().getApnsCertificate().getBytes());
 
                 apnsClient = new ApnsClientBuilder()
                         .setSigningKey(ApnsSigningKey.loadFromInputStream(is, client.getApns().getTeamId(), client.getApns().getKeyId()))

@@ -11,6 +11,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -56,4 +60,8 @@ public class LocalizationDTO {
                 .build();
     }
 
+    public static List<LocalizationDTO> of(Stream<Localization> localizations) {
+
+        return localizations.map(LocalizationDTO::of).collect(Collectors.toList());
+    }
 }

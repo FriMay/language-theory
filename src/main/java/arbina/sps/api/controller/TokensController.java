@@ -61,7 +61,9 @@ public class TokensController {
 
         boolean ack = false;
 
-        if (!tokenRepository.isTokenExists(principal.getName(), token, client.getClientId())) {
+        Optional<DeviceToken> optionalToken = tokenRepository.fetchToken(principal.getName(), token, client.getClientId());
+
+        if (!optionalToken.isPresent()) {
 
             DeviceToken deviceToken = DeviceToken.builder()
                     .username(principal.getName())
@@ -74,6 +76,20 @@ public class TokensController {
             tokenRepository.saveAndFlush(deviceToken);
 
             ack = true;
+        } else {
+
+            DeviceToken ent = optionalToken.get();
+
+            if (!ent.getLocaleIso().equals(localIso)) {
+
+                ent.setLocaleIso(localIso);
+
+                ack = true;
+            }
+
+            if (ack) {
+                tokenRepository.saveAndFlush(ent);
+            }
         }
 
         return ResponseEntity.ok(AckDTO.of(ack));

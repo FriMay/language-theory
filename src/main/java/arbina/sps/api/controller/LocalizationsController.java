@@ -41,10 +41,10 @@ public class LocalizationsController implements DtoUtils {
 
     @ApiOperation(value = "Fetch localization list for specified template.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @GetMapping("/api/templates/{templateId}/localizations")
+    @GetMapping("/api/templates/{template_id}/localizations")
     @Secured({ Authority.OBSERVER })
     public ResponseEntity<CursoredListBodyDTO<LocalizationDTO>> fetchLocalizations(
-            @PathVariable Long templateId,
+            @PathVariable(name = "template_id") Long templateId,
             @RequestParam(defaultValue = "") String cursor,
             @RequestParam(defaultValue = "100") Integer limit) {
 
@@ -54,17 +54,20 @@ public class LocalizationsController implements DtoUtils {
 
         Stream<Localization> localizationsStream = localizationsRepository.fetchAllByTemplateId(templateId);
 
+        Long count = localizationsRepository.fetchCountByTemplateId(templateId);
+
         CursoredListDTO<Localization, LocalizationDTO> dto = new CursoredListDTO<>(localizationsStream.iterator(),
-                cursor, limit, LocalizationDTO::of, localizationsRepository.count());
+                cursor, limit, LocalizationDTO::of, count);
 
         return ResponseEntity.ok(dto);
     }
 
+
     @ApiOperation(value = "Update a template localization.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @PutMapping("/api/templates/localizations/{localizationId}")
+    @PutMapping("/api/templates/localizations/{localization_id}")
     @Secured({ Authority.PUSH_MARKETING })
-    public ResponseEntity<LocalizationDTO> updateLocalization(@PathVariable Long localizationId,
+    public ResponseEntity<LocalizationDTO> updateLocalization(@PathVariable(name = "localization_id") Long localizationId,
                                                               @RequestParam String title,
                                                               @RequestParam String subtitle,
                                                               @RequestParam String body,
@@ -103,9 +106,9 @@ public class LocalizationsController implements DtoUtils {
 
     @ApiOperation(value = "Create a template localization.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @PostMapping("/api/templates/{templateId}/localizations")
+    @PostMapping("/api/templates/{template_id}/localizations")
     @Secured({ Authority.PUSH_MARKETING })
-    public ResponseEntity<LocalizationDTO> createLocalization(@PathVariable Long templateId,
+    public ResponseEntity<LocalizationDTO> createLocalization(@PathVariable(name = "template_id") Long templateId,
                                                               @RequestParam String title,
                                                               @RequestParam String subtitle,
                                                               @RequestParam String body,
@@ -139,9 +142,9 @@ public class LocalizationsController implements DtoUtils {
 
     @ApiOperation(value = "Delete a template localization.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
-    @DeleteMapping("/api/templates/localizations/{localizationId}")
+    @DeleteMapping("/api/templates/localizations/{localization_id}")
     @Secured({ Authority.PUSH_MARKETING })
-    public ResponseEntity<AckDTO> deleteLocalization(@PathVariable Long localizationId) {
+    public ResponseEntity<AckDTO> deleteLocalization(@PathVariable(name = "localization_id") Long localizationId) {
 
         if (!localizationsRepository.existsById(localizationId)) {
             throw new NotFoundException(String.format("Template localization \"%s\" is not exist", localizationId));

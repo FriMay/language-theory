@@ -20,9 +20,6 @@ public class TokenDTO {
     @JsonProperty("device_token")
     private String token;
 
-    @JsonProperty("token_type")
-    private String tokenType;
-
     @JsonProperty("locale_iso")
     private String localeIso;
 
@@ -31,7 +28,6 @@ public class TokenDTO {
         return TokenDTO
                 .builder()
                 .token(ent.getToken())
-                .tokenType(ent.getTokenType())
                 .localeIso(ent.getLocaleIso())
                 .build();
     }

@@ -1,5 +1,6 @@
 package arbina.sps.api.services;
 
+import arbina.infra.localization.Locales;
 import arbina.sps.store.entity.DeviceToken;
 import arbina.sps.store.entity.Localization;
 import arbina.sps.store.entity.Template;
@@ -21,16 +22,14 @@ public class FcmService {
 
     public List<ApiFuture<BatchResponse>> sendMessage(Template template,
                                                       Stream<DeviceToken> deviceTokens,
-                                                      FirebaseApp app) {
-
-        //TODO generate topic
-        String topic = "sameTopic";
+                                                      FirebaseApp app,
+                                                      String topic) {
 
         List<MulticastMessage> messages = getMulticastMessageList(template, deviceTokens, topic);
 
         List<ApiFuture<BatchResponse>> futures = new ArrayList<>();
 
-        for (MulticastMessage message: messages){
+        for (MulticastMessage message : messages) {
             futures.add(sendAsyncMessage(message, app));
         }
 
@@ -48,22 +47,16 @@ public class FcmService {
     private AndroidConfig getAndroidConfig(String topic) {
 
         return AndroidConfig.builder()
-                .setTtl(Duration.ofMinutes(2).toMillis()).setCollapseKey(topic)
+                .setTtl(Duration.ofMinutes(2).toMillis())
+                .setCollapseKey(topic)
                 .setPriority(AndroidConfig.Priority.HIGH)
-                .setNotification(AndroidNotification.builder().setSound(NotificationParameter.SOUND.getValue())
-                        .setColor(NotificationParameter.COLOR.getValue()).setTag(topic).build()).build();
-    }
-
-    private ApnsConfig getApnsConfig(Template template,
-                                     String topic) {
-
-        return ApnsConfig.builder()
-                .setAps(Aps
-                        .builder()
-                        .setBadge(template.getBadge())
-                        .setCategory(topic)
-                        .setThreadId(topic)
-                        .build())
+                .setNotification(
+                        AndroidNotification
+                                .builder()
+                                .setSound(NotificationParameter.SOUND.getValue())
+                                .setColor(NotificationParameter.COLOR.getValue())
+                                .setTag(topic)
+                                .build())
                 .build();
     }
 
@@ -73,13 +66,11 @@ public class FcmService {
 
         Map<String, MulticastMessage.Builder> localeMulticastMessage = new HashMap<>();
 
-        ApnsConfig apnsConfig = getApnsConfig(template, topic);
-
         AndroidConfig androidConfig = getAndroidConfig(topic);
 
         deviceTokens.forEach((deviceToken) -> {
 
-            String[] locales = {deviceToken.getLocaleIso(), "en", template.getLocalizations().get(0).getLocaleIso()};
+            String[] locales = {deviceToken.getLocaleIso(), Locales.defaultLanguageCode.getName(), template.getLocalizations().get(0).getLocaleIso()};
 
             for (String locale : locales) {
 
@@ -100,13 +91,11 @@ public class FcmService {
 
                         isAdd = true;
 
-                        multicastMessage = getPreconfiguredMulticastMessageBuilder(localization, apnsConfig, androidConfig);
+                        multicastMessage = getPreconfiguredMulticastMessageBuilder(localization, androidConfig);
 
                         multicastMessage.addToken(deviceToken.getToken());
 
                         multicastMessage.putAllData(template.getParams());
-
-                        multicastMessage.putData("badge", template.getBadge().toString());
 
                         localeMulticastMessage.put(localization.getLocaleIso(), multicastMessage);
 
@@ -114,7 +103,7 @@ public class FcmService {
                     }
                 }
 
-                if (isAdd){
+                if (isAdd) {
                     break;
                 }
 
@@ -123,23 +112,22 @@ public class FcmService {
 
         List<MulticastMessage> messages = new ArrayList<>();
 
-        for (Map.Entry<String, MulticastMessage.Builder> entry: localeMulticastMessage.entrySet()){
+        for (Map.Entry<String, MulticastMessage.Builder> entry : localeMulticastMessage.entrySet()) {
             messages.add(entry.getValue().build());
         }
 
         return messages;
     }
 
-    private MulticastMessage.Builder getPreconfiguredMulticastMessageBuilder(Localization localization, ApnsConfig apnsConfig, AndroidConfig androidConfig) {
+    private MulticastMessage.Builder getPreconfiguredMulticastMessageBuilder(Localization localization,
+                                                                             AndroidConfig androidConfig) {
 
         Notification.Builder notification = Notification.builder()
                 .setTitle(localization.getTitle())
                 .setBody(localization.getBody());
 
         return MulticastMessage.builder()
-                .setApnsConfig(apnsConfig)
                 .setAndroidConfig(androidConfig)
                 .setNotification(notification.build());
     }
-
 }

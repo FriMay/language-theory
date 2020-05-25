@@ -31,13 +31,13 @@ public class ClientsService {
             throw new BadRequestException("Client id can't be empty.");
         }
 
+        if (arbinaId.getClient(clientId) == null) {
+            throw new BadRequestException(String.format("Client with \"%s\" name is not found", clientId));
+        }
+
         Client client = clientsRepository.findById(clientId).orElse(null);
 
         if (client == null) {
-
-            if (arbinaId.getClient(clientId) == null) {
-                throw new BadRequestException(String.format("Client with \"%s\" name is not found", clientId));
-            }
 
             client = Client.builder()
                     .clientId(clientId)
@@ -47,6 +47,5 @@ public class ClientsService {
         }
 
         return client;
-
     }
 }

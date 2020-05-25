@@ -5,8 +5,8 @@ import arbina.infra.exceptions.BadRequestException;
 import arbina.infra.exceptions.NotFoundException;
 import arbina.infra.services.id.Authority;
 import arbina.sps.api.services.ClientsService;
-import arbina.sps.config.SwaggerConfig;
 import arbina.sps.api.services.PushNotificationService;
+import arbina.sps.config.SwaggerConfig;
 import arbina.sps.store.entity.Client;
 import arbina.sps.store.entity.Template;
 import arbina.sps.store.repository.TemplatesRepository;
@@ -38,7 +38,7 @@ public class PushNotificationController {
         this.clientsService = clientsService;
     }
 
-    @ApiOperation(value = "Send notification by template name.",
+    @ApiOperation(value = "Send notification by template name and client id.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PostMapping("/api/templates/notifications")
     @Secured({ Authority.PUSH_NOTIFIER })
@@ -57,11 +57,11 @@ public class PushNotificationController {
             throw new NotFoundException(String.format("Template with \"%s\" name is not found", templateName));
         }
 
-        if (template.getLocalizations().isEmpty()){
+        if (template.getLocalizations().isEmpty()) {
             throw new NotFoundException("Add at least one localization to this template to use it");
         }
 
-        if (client.getApns() == null && client.getFcm() == null){
+        if (client.getApns() == null && client.getFcm() == null) {
             throw new NotFoundException("Add a configuration for sending push notifications");
         }
 
@@ -69,6 +69,5 @@ public class PushNotificationController {
 
         return ResponseEntity.ok(new AckDTO(true));
     }
-
 }
 

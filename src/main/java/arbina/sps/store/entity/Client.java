@@ -29,6 +29,9 @@ public class Client implements CursoredListDTO.Entity {
     @Embedded
     private Apns apns;
 
+    @Column(name = "topic")
+    private String topic;
+
     @Column(name = "is_configurable")
     private Boolean isConfigurable = false;
 

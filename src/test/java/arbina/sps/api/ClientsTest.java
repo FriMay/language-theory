@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ClientsController.class)
-public class ClientsTest extends BaseWebTest{
+public class ClientsTest extends BaseWebTest {
 
     @Autowired
     private WebApplicationContext webapp;
@@ -29,9 +29,10 @@ public class ClientsTest extends BaseWebTest{
 
     @Test
     @WithMockUser(authorities = Authority.PUSH_NOTIFIER)
-    public void shouldReturnOk() throws Exception {
-        mvc.perform(get("/api/settings/clients/{clientId}", "random_client_id"))
-                .andExpect(status().isBadRequest());
+    public void shouldReturnExpectationFailed() throws Exception {
+
+        mvc.perform(get("/api/settings/clients/{client_id}", "random_client_id"))
+                .andExpect(status().isNotFound());
     }
 }
 

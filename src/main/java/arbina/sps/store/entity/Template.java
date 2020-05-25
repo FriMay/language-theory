@@ -29,9 +29,6 @@ public class Template implements CursoredListDTO.Entity {
     @Column(name = "name", unique = true)
     private String name;
 
-    @Column(name = "badge")
-    private Integer badge;
-
     @Column(name = "description")
     private String description;
 
@@ -62,7 +59,6 @@ public class Template implements CursoredListDTO.Entity {
     public static void fromDTO(TemplateDTO dto, Template ent) {
         ent.setName(dto.getName());
         ent.setDescription(dto.getDescription());
-        ent.setBadge(ent.getBadge());
         ent.setParams(dto.getParams());
     }
 

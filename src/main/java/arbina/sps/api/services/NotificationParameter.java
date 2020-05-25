@@ -1,6 +1,6 @@
 package arbina.sps.api.services;
 
-public enum  NotificationParameter {
+public enum NotificationParameter {
     SOUND("default"),
     COLOR("#FFFF00");
 
