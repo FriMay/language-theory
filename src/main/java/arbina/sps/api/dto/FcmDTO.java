@@ -22,6 +22,9 @@ public class FcmDTO {
 
     public static FcmDTO of(Fcm ent) {
 
+        if (ent == null)
+            return null;
+
         return FcmDTO.builder()
                 .updatedAt(ent.getUpdatedAt())
                 .build();
