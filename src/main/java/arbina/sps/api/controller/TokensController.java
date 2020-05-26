@@ -72,7 +72,7 @@ public class TokensController {
             DeviceToken deviceToken = DeviceToken.builder()
                     .username(principal.getName())
                     .token(token)
-                    .preferredLanguage(language)
+                    .acceptLanguage(language)
                     .client(client)
                     .createdAt(new Date())
                     .build();
@@ -84,9 +84,9 @@ public class TokensController {
 
             DeviceToken ent = optionalToken.get();
 
-            if (!ent.getPreferredLanguage().equals(language)) {
+            if (!ent.getAcceptLanguage().equals(language)) {
 
-                ent.setPreferredLanguage(language);
+                ent.setAcceptLanguage(language);
 
                 ack = true;
             }

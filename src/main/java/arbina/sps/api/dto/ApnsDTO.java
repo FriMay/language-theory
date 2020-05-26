@@ -39,6 +39,10 @@ public class ApnsDTO {
 
     public static ApnsDTO of(Apns ent) {
 
+        if (ent == null){
+            return null;
+        }
+
         return ApnsDTO.builder()
                 .teamId(ent.getTeamId())
                 .keyId(ent.getKeyId())

@@ -34,8 +34,8 @@ public class DeviceToken implements CursoredListDTO.Entity {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @Column(name = "preferred_language")
-    private String preferredLanguage;
+    @Column(name = "accept_language")
+    private String acceptLanguage;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", referencedColumnName = "id")

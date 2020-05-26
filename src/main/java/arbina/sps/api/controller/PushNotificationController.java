@@ -96,9 +96,20 @@ public class PushNotificationController {
                     pushNotificationService.sendPushNotification(template, client);
                 }), client.getClientId());
 
-                threads.add(thread);
+                try {
 
-                thread.start();
+                    thread.start();
+
+                    threads.add(thread);
+                } catch (Exception e) {
+
+                    answers.add(AnswerDTO.builder()
+                            .reason(String.format("An error occurred." +
+                                            "Notifications to \"%s\" client id were not sent",
+                                    thread.getName()))
+                            .result(false)
+                            .build());
+                }
             }
         });
 
@@ -113,7 +124,7 @@ public class PushNotificationController {
                                 thread.getName()))
                         .result(true)
                         .build());
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
 
                 answers.add(AnswerDTO.builder()
                         .reason(String.format("An error occurred." +
