@@ -85,9 +85,12 @@ public class TokensController {
             DeviceToken ent = optionalToken.get();
 
             if (!ent.getAcceptLanguage().equals(language)) {
-
                 ent.setAcceptLanguage(language);
+                ack = true;
+            }
 
+            if (!ent.getClientId().equals(clientId)) {
+                ent.setClientId(clientId);
                 ack = true;
             }
 
