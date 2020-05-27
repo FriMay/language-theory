@@ -10,11 +10,11 @@ import com.google.firebase.messaging.*;
 import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageCode;
 import com.neovisionaries.i18n.LocaleCode;
-import javafx.util.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -83,7 +83,7 @@ public class FcmService {
             deviceMessages.put(localeCode.toString(),
                     DeviceMessage.builder()
                             .isExist(true)
-                            .message(new Pair<>(builder, new Counter(0)))
+                            .message(Pair.of(builder, new Counter(0)))
                             .localization(localization)
                             .build());
         }
@@ -221,7 +221,7 @@ public class FcmService {
 
             builder.addToken(token);
 
-            deviceMessage.setMessage(new Pair<>(builder, new Counter(1)));
+            deviceMessage.setMessage(Pair.of(builder, new Counter(1)));
         }
     }
 }
