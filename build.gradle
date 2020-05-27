@@ -28,8 +28,8 @@ repositories {
         name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/ArbinaHQ/arbina-infra-sdk-java")
         credentials {
-            username = GITHUB_USERNAME
-            password = GITHUB_TOKEN
+            username = project.findProperty("GITHUB_USERNAME") as String ?: System.getenv("GITHUB_ACTOR")
+            password = project.findProperty("GITHUB_TOKEN") as String ?: System.getenv("GITHUB_TOKEN")
         }
     }
 }
