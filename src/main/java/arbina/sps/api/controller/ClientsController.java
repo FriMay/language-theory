@@ -120,7 +120,7 @@ public class ClientsController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PatchMapping("/api/settings/clients/{client_id}/fcm")
     @Secured({ Authority.PUSH_NOTIFIER })
-    public ResponseEntity<FcmDTO> patchFcm(
+    public ResponseEntity<ClientConfigDTO> patchFcm(
             @PathVariable(name = "client_id") String clientId,
             @RequestParam(name = "configuration_file") MultipartFile configurationFile) {
 
@@ -138,14 +138,14 @@ public class ClientsController implements DtoUtils {
 
         client = clientsRepository.saveAndFlush(client);
 
-        return ResponseEntity.ok(FcmDTO.of(client.getFcm()));
+        return ResponseEntity.ok(ClientConfigDTO.of(client));
     }
 
     @ApiOperation(value = "Patch APNS for client.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PatchMapping("/api/settings/clients/{client_id}/apns")
     @Secured({ Authority.PUSH_NOTIFIER })
-    public ResponseEntity<ApnsDTO> patchApns(
+    public ResponseEntity<ClientConfigDTO> patchApns(
             @PathVariable(name = "client_id") String clientId,
             @RequestParam(name = "apns_certificate") MultipartFile apnsCeritificate,
             @RequestParam(name = "team_id") String teamId,
@@ -183,7 +183,7 @@ public class ClientsController implements DtoUtils {
 
         client = clientsRepository.saveAndFlush(client);
 
-        return ResponseEntity.ok(ApnsDTO.of(client.getApns()));
+        return ResponseEntity.ok(ClientConfigDTO.of(client));
     }
 
     @ApiOperation(value = "Delete client configuration.",
