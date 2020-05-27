@@ -20,15 +20,15 @@ public class TokenDTO {
     @JsonProperty("device_token")
     private String token;
 
-    @JsonProperty("preferred_language")
-    private String preferredLanguage;
+    @JsonProperty("accept_language")
+    private String acceptLanguage;
 
     public static TokenDTO of(DeviceToken ent) {
 
         return TokenDTO
                 .builder()
                 .token(ent.getToken())
-                .preferredLanguage(ent.getPreferredLanguage())
+                .acceptLanguage(ent.getAcceptLanguage())
                 .build();
     }
 }
