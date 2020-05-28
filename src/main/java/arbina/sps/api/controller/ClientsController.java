@@ -11,7 +11,7 @@ import arbina.infra.services.id.dto.ClientDTO;
 import arbina.infra.utils.DtoUtils;
 import arbina.sps.api.dto.ApnsDTO;
 import arbina.sps.api.dto.ClientConfigDTO;
-import arbina.sps.api.dto.FcmDTO;
+import arbina.sps.api.error.ConflictException;
 import arbina.sps.api.services.ClientsService;
 import arbina.sps.config.SwaggerConfig;
 import arbina.sps.store.entity.Apns;
@@ -125,6 +125,9 @@ public class ClientsController implements DtoUtils {
             @RequestParam(name = "configuration_file") MultipartFile configurationFile) {
 
         Client client = clientsService.validateAndGetClient(clientId);
+        if (client.getApns() != null) {
+            throw new ConflictException("This client is already configured as APNS sender.");
+        }
 
         String stringConfig = validateFcmConfig(configurationFile);
 
@@ -161,6 +164,9 @@ public class ClientsController implements DtoUtils {
         }
 
         Client client = clientsService.validateAndGetClient(clientId);
+        if (client.getFcm() != null) {
+            throw new ConflictException("This client is already configured as FCM sender.");
+        }
 
         String stringConfig = validateApnsCertificate(apnsCeritificate);
 
