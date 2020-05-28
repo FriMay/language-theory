@@ -135,6 +135,7 @@ public class ClientsController implements DtoUtils {
                 .build();
 
         client.setFcm(fcm);
+        client.setApns(null);
         client.setIsConfigurable(true);
 
         client = clientsRepository.saveAndFlush(client);
@@ -182,6 +183,7 @@ public class ClientsController implements DtoUtils {
         apns.setApnsCertificate(stringConfig);
 
         client.setApns(apns);
+        client.setFcm(null);
         client.setIsConfigurable(true);
         client.setTopic(topic);
 
