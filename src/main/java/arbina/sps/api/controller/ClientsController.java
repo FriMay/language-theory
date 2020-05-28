@@ -1,7 +1,5 @@
 package arbina.sps.api.controller;
 
-
-import arbina.infra.dto.AckDTO;
 import arbina.infra.dto.CursoredListBodyDTO;
 import arbina.infra.dto.CursoredListDTO;
 import arbina.infra.exceptions.BadRequestException;
@@ -196,7 +194,7 @@ public class ClientsController implements DtoUtils {
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @DeleteMapping("/api/settings/clients/{client_id}")
     @Secured({ Authority.PUSH_NOTIFIER })
-    public ResponseEntity<AckDTO> deleteClientConfig(@PathVariable(name = "client_id") String clientId) {
+    public ResponseEntity<ClientConfigDTO> deleteClientConfig(@PathVariable(name = "client_id") String clientId) {
 
         Client client = clientsService.validateAndGetClient(clientId);
 
@@ -206,7 +204,7 @@ public class ClientsController implements DtoUtils {
 
         clientsRepository.saveAndFlush(client);
 
-        return ResponseEntity.ok(new AckDTO(true));
+        return ResponseEntity.ok(ClientConfigDTO.of(client));
     }
 
     /**
