@@ -51,7 +51,7 @@ public class ClientsController implements DtoUtils {
     @ApiOperation(value = "Fetch all clients id.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @GetMapping("/api/settings/clients")
-    @Secured({ Authority.PUSH_NOTIFIER })
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<CursoredListBodyDTO<ClientConfigDTO>> fetchClients(
             @RequestParam(defaultValue = "", required = false) String cursor,
             @RequestParam(defaultValue = "100", required = false) Integer limit,
@@ -89,7 +89,7 @@ public class ClientsController implements DtoUtils {
     @ApiOperation(value = "Fetch client by client id.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @GetMapping("/api/settings/clients/{client_id}")
-    @Secured({ Authority.PUSH_NOTIFIER })
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<ClientConfigDTO> fetchClient(@PathVariable(name = "client_id") String clientId) {
 
         Client client = clientsService.validateAndGetClient(clientId);
@@ -100,7 +100,7 @@ public class ClientsController implements DtoUtils {
     @ApiOperation(value = "Patch configurable for client.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PatchMapping("/api/settings/clients/{client_id}")
-    @Secured({Authority.PUSH_NOTIFIER})
+    @Secured({Authority.PUSH_MARKETING})
     public ResponseEntity<ClientConfigDTO> patchClient(
             @PathVariable(name = "client_id") String clientId,
             @RequestParam(name = "is_configurable") Boolean isConfigurable) {
@@ -117,7 +117,7 @@ public class ClientsController implements DtoUtils {
     @ApiOperation(value = "Patch FCM for client.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PatchMapping("/api/settings/clients/{client_id}/fcm")
-    @Secured({ Authority.PUSH_NOTIFIER })
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<ClientConfigDTO> patchFcm(
             @PathVariable(name = "client_id") String clientId,
             @RequestParam(name = "configuration_file") MultipartFile configurationFile) {
@@ -145,7 +145,7 @@ public class ClientsController implements DtoUtils {
     @ApiOperation(value = "Patch APNS for client.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @PatchMapping("/api/settings/clients/{client_id}/apns")
-    @Secured({ Authority.PUSH_NOTIFIER })
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<ClientConfigDTO> patchApns(
             @PathVariable(name = "client_id") String clientId,
             @RequestParam(name = "apns_certificate") MultipartFile apnsCeritificate,
@@ -193,7 +193,7 @@ public class ClientsController implements DtoUtils {
     @ApiOperation(value = "Delete client configuration.",
             authorizations = {@Authorization(value = SwaggerConfig.oAuth2)})
     @DeleteMapping("/api/settings/clients/{client_id}")
-    @Secured({ Authority.PUSH_NOTIFIER })
+    @Secured({ Authority.PUSH_MARKETING })
     public ResponseEntity<ClientConfigDTO> deleteClientConfig(@PathVariable(name = "client_id") String clientId) {
 
         Client client = clientsService.validateAndGetClient(clientId);
