@@ -1,25 +1,44 @@
 package test;
 
-import language.theory.liksin.biriukov.GrammarParser;
+import language.theory.liksin.biriukov.*;
 import org.junit.Test;
+
+import java.util.List;
 
 public class GrammarParserTest {
 
     @Test
-    public void shouldCreateGrammarParser() {
+    public void shouldCreateGrammar() {
+
+        String stringGrammar =
+                String.format("%s%s%s",
+                        "Vt = { x` +` (` ) } ",
+                        "Va = { A-C } ",
+                        "R = {A -> x | (/B/)` B->A/C` C->+/A/C ` C->} "
+                );
+
+        Grammar grammar = GrammarParser.parseGrammar(stringGrammar);
+
+        List<ReplaceFunction> replaceFunctionList
+                = ReplaceFunctionGenerator.generateReplaceFunctions(grammar);
+
+        ReplaceFunctionApplier.apply("(x+x)","A", replaceFunctionList);
+
+        System.out.println(grammar);
+    }
+
+    @Test
+    public void shouldReturnException() {
 
         String stringGrammar =
                 String.format("%s%s%s",
                         "Vt = { a-z` 0-9` , ` var` begin` end } ",
-                        "Va = { A-Z } ",
-                        "R = {A -> aC | cA` B->cB` C->} "
+                        "Va = { A-C } ",
+                        "R = {A -> a/C/x | aBy` B->cA` C->} "
                 );
 
-        GrammarParser grammarParser = new GrammarParser(stringGrammar);
+        Grammar grammar = GrammarParser.parseGrammar(stringGrammar);
 
-        System.out.printf("Source grammatical: %s%n", stringGrammar);
-        System.out.printf("Terminal dictionary: %s%n", grammarParser.getTerminalDictionary());
-        System.out.printf("Not terminal dictionary: %s%n", grammarParser.getNonTerminalDictionary());
-        System.out.printf("Rules list: %s%n", grammarParser.getRules());
+        System.out.println(grammar);
     }
 }

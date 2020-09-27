@@ -31,34 +31,24 @@ public class GrammarParser {
     private static final String RULE_DIVIDER = "->";
 
     private static final String SUB_RULE_DIVIDER = "|";
+
+    private static final String IN_RULE_DIVIDER = "/";
     /////////////////////////////////////////////////////////////////////////////////
 
-    private Set<String> terminalDictionary;
-
-    private Set<String> nonTerminalDictionary;
-
-    private List<Pair<String, String>> rules;
-
-    public GrammarParser(String grammarString) {
+    public static Grammar parseGrammar(String grammarString) {
 
         String grammarStringWithoutEscapes = grammarString.replaceAll("\\s+", EMPTY_STRING);
 
-        this.rules = generateRules(grammarStringWithoutEscapes);
-
-        this.terminalDictionary = generateSetByGrammarAndName(
-                grammarStringWithoutEscapes,
-                TERMINAL_DICTIONARY_NAME
-        );
-
-        this.nonTerminalDictionary = generateSetByGrammarAndName(
-                grammarStringWithoutEscapes,
-                NON_TERMINAL_DICTIONARY_NAME
+        return new Grammar(
+                generateSetByGrammarAndName(grammarStringWithoutEscapes, TERMINAL_DICTIONARY_NAME),
+                generateSetByGrammarAndName(grammarStringWithoutEscapes, NON_TERMINAL_DICTIONARY_NAME),
+                generateRules(grammarStringWithoutEscapes)
         );
     }
 
-    private List<Pair<String, String>> generateRules(String grammarString) {
+    private static List<Pair<String, List<String>>> generateRules(String grammarString) {
 
-        List<Pair<String, String>> rules = new ArrayList<>();
+        List<Pair<String, List<String>>> rules = new ArrayList<>();
 
         findByRegexp(grammarString, RULES_NAME)
                 .forEach(rule -> {
@@ -67,25 +57,41 @@ public class GrammarParser {
 
                     String ruleName = ruleParts[0];
 
-                    String ruleDeclaration = "";
+                    boolean isEmpty = ruleParts.length == 1;
 
-                    if (ruleParts.length != 1){
-                        ruleDeclaration = ruleParts[1];
-                    }
-
-                    if (ruleDeclaration.contains(SUB_RULE_DIVIDER)) {
-                        for (String subRule : ruleDeclaration.split("\\"+SUB_RULE_DIVIDER)) {
-                            rules.add(new Pair<>(ruleName, subRule));
-                        }
+                    if (isEmpty) {
+                        rules.add(new Pair<>(ruleName, new ArrayList<>()));
                     } else {
-                        rules.add(new Pair<>(ruleName, ruleDeclaration));
+
+                        String ruleDeclaration = ruleParts[1];
+
+                        List<String> subRules = new ArrayList<>();
+
+                        if (ruleDeclaration.contains(SUB_RULE_DIVIDER)) {
+                            subRules.addAll(Arrays.asList(ruleDeclaration.split("\\" + SUB_RULE_DIVIDER)));
+                        } else {
+                            subRules.add(ruleDeclaration);
+                        }
+
+                        subRules.forEach(it -> {
+
+                            List<String> inRuleParts = new ArrayList<>();
+
+                            if (it.contains(IN_RULE_DIVIDER)) {
+                                inRuleParts.addAll(Arrays.asList(it.split( IN_RULE_DIVIDER)));
+                            } else {
+                                inRuleParts.add(it);
+                            }
+
+                            rules.add(new Pair<>(ruleName, inRuleParts));
+                        });
                     }
                 });
 
         return rules;
     }
 
-    private Set<String> generateSetByGrammarAndName(String grammarString, String name) {
+    private static Set<String> generateSetByGrammarAndName(String grammarString, String name) {
 
         Set<String> set = new HashSet<>();
 
@@ -124,7 +130,7 @@ public class GrammarParser {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private List<String> findByRegexp(
+    private static List<String> findByRegexp(
             String searchString,
             String grammarPartName) {
 
