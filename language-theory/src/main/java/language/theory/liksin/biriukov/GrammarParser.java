@@ -1,8 +1,8 @@
 package language.theory.liksin.biriukov;
 
 import javafx.util.Pair;
-import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -78,7 +78,7 @@ public class GrammarParser {
                             List<String> inRuleParts = new ArrayList<>();
 
                             if (it.contains(IN_RULE_DIVIDER)) {
-                                inRuleParts.addAll(Arrays.asList(it.split( IN_RULE_DIVIDER)));
+                                inRuleParts.addAll(Arrays.asList(it.split(IN_RULE_DIVIDER)));
                             } else {
                                 inRuleParts.add(it);
                             }

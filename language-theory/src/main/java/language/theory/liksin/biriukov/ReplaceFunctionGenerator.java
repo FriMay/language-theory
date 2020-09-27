@@ -25,7 +25,7 @@ public class ReplaceFunctionGenerator {
         return replaceFunctions;
     }
 
-   private static List<ReplaceFunction> firstGenerationRule(Grammar grammar) {
+    private static List<ReplaceFunction> firstGenerationRule(Grammar grammar) {
 
         return grammar
                 .getRules()
@@ -51,9 +51,9 @@ public class ReplaceFunctionGenerator {
                             .build();
                 })
                 .collect(Collectors.toList());
-   }
+    }
 
-   private static List<ReplaceFunction> secondGenerationRule(Grammar grammar) {
+    private static List<ReplaceFunction> secondGenerationRule(Grammar grammar) {
 
         List<ReplaceFunction> replaceFunctions = new ArrayList<>();
 
@@ -71,20 +71,20 @@ public class ReplaceFunctionGenerator {
                                     .get(rule.getKey())
                                     .stream()
                                     .map(leftReadOrder ->
-                                                ReplaceFunction.builder()
-                                                        .leftReadOrder(leftReadOrder)
-                                                        .rightReadOrder(rightReadOrder)
-                                                        .writeOrder(writeOrder)
-                                                        .isRead(false)
-                                                        .build()
+                                            ReplaceFunction.builder()
+                                                    .leftReadOrder(leftReadOrder)
+                                                    .rightReadOrder(rightReadOrder)
+                                                    .writeOrder(writeOrder)
+                                                    .isRead(false)
+                                                    .build()
                                     ).collect(Collectors.toList())
                     );
                 });
 
         return replaceFunctions;
-   }
+    }
 
-   private static List<ReplaceFunction> thirdGenerationRule(Grammar grammar) {
+    private static List<ReplaceFunction> thirdGenerationRule(Grammar grammar) {
 
         List<ReplaceFunction> replaceFunctions = new ArrayList<>();
 
@@ -102,20 +102,20 @@ public class ReplaceFunctionGenerator {
                                     .get(rule.getKey())
                                     .stream()
                                     .map(leftReadOrder ->
-                                                ReplaceFunction.builder()
-                                                        .leftReadOrder(leftReadOrder)
-                                                        .rightReadOrder(rightReadOrder)
-                                                        .writeOrder(writeOrder)
-                                                        .isRead(false)
-                                                        .build()
+                                            ReplaceFunction.builder()
+                                                    .leftReadOrder(leftReadOrder)
+                                                    .rightReadOrder(rightReadOrder)
+                                                    .writeOrder(writeOrder)
+                                                    .isRead(false)
+                                                    .build()
                                     ).collect(Collectors.toList())
                     );
                 });
 
         return replaceFunctions;
-   }
+    }
 
-   private static List<ReplaceFunction> fourGenerationRule(Grammar grammar) {
+    private static List<ReplaceFunction> fourGenerationRule(Grammar grammar) {
 
         Set<String> allFirsts = new HashSet<>();
 
@@ -133,5 +133,5 @@ public class ReplaceFunctionGenerator {
                         .isRead(true)
                         .build()
                 ).collect(Collectors.toList());
-   }
+    }
 }

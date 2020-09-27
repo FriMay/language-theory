@@ -1,7 +1,7 @@
 package language.theory.liksin.biriukov;
 
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
 
 import java.util.List;
 

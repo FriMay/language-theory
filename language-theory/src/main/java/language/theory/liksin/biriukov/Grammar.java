@@ -114,7 +114,7 @@ public class Grammar {
 
     private static void add(Set<String> firstSet, String ruleName, Set<String> added) {
 
-        for (String first: added) {
+        for (String first : added) {
             if (firstSet.contains(first)) {
                 throw new IllegalStateException(
                         String.format("Rule \"%s\" already contain \"%s\" terminal.", ruleName, first)

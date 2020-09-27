@@ -1,13 +1,11 @@
 package language.theory.liksin.biriukov;
 
-import lombok.Data;
-
 import java.util.List;
 import java.util.Stack;
 
 public class ReplaceFunctionApplier {
 
-    private static Stack<String> stack = new Stack<>();
+    private static final Stack<String> stack = new Stack<>();
 
     private static String currentOrder;
 
@@ -29,7 +27,7 @@ public class ReplaceFunctionApplier {
 
                     stack.pop();
 
-                    it.getWriteOrder().forEach(wo -> stack.push(wo));
+                    it.getWriteOrder().forEach(stack::push);
                 }
             });
         }
