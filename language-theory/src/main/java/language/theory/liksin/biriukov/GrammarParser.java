@@ -67,7 +67,11 @@ public class GrammarParser {
 
                     String ruleName = ruleParts[0];
 
-                    String ruleDeclaration = ruleParts[1];
+                    String ruleDeclaration = "";
+
+                    if (ruleParts.length != 1){
+                        ruleDeclaration = ruleParts[1];
+                    }
 
                     if (ruleDeclaration.contains(SUB_RULE_DIVIDER)) {
                         for (String subRule : ruleDeclaration.split("\\"+SUB_RULE_DIVIDER)) {

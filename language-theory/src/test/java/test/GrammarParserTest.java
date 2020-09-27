@@ -12,7 +12,7 @@ public class GrammarParserTest {
                 String.format("%s%s%s",
                         "Vt = { a-z` 0-9` , ` var` begin` end } ",
                         "Va = { A-Z } ",
-                        "R = {A -> aC | cA` B->cB} "
+                        "R = {A -> aC | cA` B->cB` C->} "
                 );
 
         GrammarParser grammarParser = new GrammarParser(stringGrammar);
