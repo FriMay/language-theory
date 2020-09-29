@@ -22,7 +22,7 @@ public class GrammarParserTest {
         List<ReplaceFunction> replaceFunctionList
                 = ReplaceFunctionGenerator.generateReplaceFunctions(grammar);
 
-        ReplaceFunctionApplier.apply("(x+x)","A", replaceFunctionList);
+        ReplaceFunctionApplier.apply("x+x","A", replaceFunctionList);
 
         System.out.println(grammar);
     }

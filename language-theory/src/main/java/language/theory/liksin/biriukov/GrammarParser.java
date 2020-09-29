@@ -75,6 +75,16 @@ public class GrammarParser {
 
                         subRules.forEach(it -> {
 
+                            if (it.startsWith(ruleName)) {
+                                throw new IllegalStateException(
+                                        String.format(
+                                                "Grammar isn't LL1 cause rule %s=%s is left recursion.",
+                                                ruleName,
+                                                it
+                                        )
+                                );
+                            }
+
                             List<String> inRuleParts = new ArrayList<>();
 
                             if (it.contains(IN_RULE_DIVIDER)) {

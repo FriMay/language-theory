@@ -4,6 +4,7 @@ import javafx.util.Pair;
 import lombok.Data;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 public class Grammar {
@@ -159,5 +160,20 @@ public class Grammar {
                 });
 
         return nexts.get(ruleName);
+    }
+
+    public String toString() {
+        return String
+                .format(
+                        "\nGrammar declaration.\nTerminal dictionary: %s,\nNon terminal dictionary: %s, \nRules: %s",
+                        terminalDictionary,
+                        nonTerminalDictionary,
+                        rules.stream()
+                                .map(it -> String.format(
+                                        "%s=%s",
+                                        it.getKey(),
+                                        String.join("", it.getValue())
+                                )).collect(Collectors.joining(", "))
+                );
     }
 }

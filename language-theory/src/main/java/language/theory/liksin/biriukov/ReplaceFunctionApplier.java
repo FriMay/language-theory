@@ -15,6 +15,8 @@ public class ReplaceFunctionApplier {
 
         stack.push(startRule);
 
+        printCurrentCondition();
+
         while (currentOrder.length() != 0 && !stack.isEmpty()) {
 
             replaceFunctionList.forEach(it -> {
@@ -28,11 +30,15 @@ public class ReplaceFunctionApplier {
                     stack.pop();
 
                     it.getWriteOrder().forEach(stack::push);
+
+                    System.out.print("\n -> ");
+
+                    printCurrentCondition();
                 }
             });
         }
 
-        System.out.println("Success");
+        System.out.print("\nSuccess");
     }
 
     private static void setCurrentOrder(String order, Integer size) {
@@ -44,5 +50,9 @@ public class ReplaceFunctionApplier {
         }
 
         currentOrder = newOrder.toString();
+    }
+
+    private static void printCurrentCondition() {
+        System.out.printf("(S0, %s, h0%s)", currentOrder, String.join("", stack));
     }
 }
