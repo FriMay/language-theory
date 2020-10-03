@@ -43,7 +43,7 @@ public class ReplaceFunctionApplier {
             });
 
             if (!isRuleApplied.get()) {
-                System.out.printf("\n\nFor rule %s not found operator \"%s\"", stack.peek(), currentOrder.charAt(0));
+                System.out.printf("\n\nFor rule %s not found function with consume parameter \"%s\"", stack.peek(), currentOrder.charAt(0));
                 break;
             }
         }
