@@ -2,6 +2,7 @@ package language.theory.liksin.biriukov;
 
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReplaceFunctionApplier {
 
@@ -9,15 +10,17 @@ public class ReplaceFunctionApplier {
 
     private static String currentOrder;
 
-    public static void apply(String startOrder, String startRule, List<ReplaceFunction> replaceFunctionList) {
+    public static void apply(String startOrder, String startRule, List<ReplaceFunction> replaceFunctionList, Grammar grammar) {
 
-        currentOrder = startOrder;
+        currentOrder = startOrder.replaceAll("\\s+", "");
 
         stack.push(startRule);
 
         printCurrentCondition();
 
         while (currentOrder.length() != 0 && !stack.isEmpty()) {
+
+            AtomicBoolean isRuleApplied = new AtomicBoolean(false);
 
             replaceFunctionList.forEach(it -> {
 
@@ -34,11 +37,16 @@ public class ReplaceFunctionApplier {
                     System.out.print("\n -> ");
 
                     printCurrentCondition();
+
+                    isRuleApplied.set(true);
                 }
             });
-        }
 
-        System.out.print("\nSuccess");
+            if (!isRuleApplied.get()) {
+                System.out.printf("\n\nFor rule %s not found operator \"%s\"", stack.peek(), currentOrder.charAt(0));
+                break;
+            }
+        }
     }
 
     private static void setCurrentOrder(String order, Integer size) {

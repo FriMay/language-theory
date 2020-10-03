@@ -38,7 +38,12 @@ public class Grammar {
 
     private void checkFirstsAndNexts() {
 
-        nonTerminalDictionary.forEach(nonTerminal -> {
+        Set<String> nonTerminalWithEmptyRule = rules.stream()
+                .filter(it -> it.getValue().size() == 0)
+                .map(Pair::getKey)
+                .collect(Collectors.toSet());
+
+        nonTerminalWithEmptyRule.forEach(nonTerminal -> {
 
             Set<String> first = firsts.get(nonTerminal);
 
@@ -55,8 +60,6 @@ public class Grammar {
                     );
                 }
             });
-
-
         });
     }
 
@@ -88,25 +91,21 @@ public class Grammar {
                 .filter(it -> it.getKey().equals(ruleName))
                 .forEach(it -> {
 
-                    if (it.getValue().size() != 0) {
+                    Set<String> currentFirst = firsts.get(ruleName);
 
-                        Set<String> currentFirst = firsts.get(ruleName);
+                    if (it.getValue().size() != 0) {
 
                         String current = it.getValue().get(0);
 
                         if (terminalDictionary.contains(current)) {
                             add(currentFirst, ruleName, Collections.singleton(current));
                         } else {
-
                             add(currentFirst, ruleName, generateFirsts(current));
-
-                            boolean isNonTerminalHasEmptyRule = rules.stream()
-                                    .anyMatch(rp -> rp.getKey().equals(current) && rp.getValue().size() == 0);
-
-                            if (isNonTerminalHasEmptyRule) {
-                                add(currentFirst, ruleName, generateNexts(current));
-                            }
                         }
+
+                        rules.stream()
+                                .filter(rp -> rp.getKey().equals(current) && rp.getValue().size() == 0)
+                                .forEach(rp -> add(currentFirst, ruleName, generateNexts(rp.getKey())));
                     }
                 });
 
@@ -126,6 +125,10 @@ public class Grammar {
     }
 
     private Set<String> generateNexts(String ruleName) {
+
+        if (ruleName.equals("<СписокПеременных'>")) {
+            System.out.println();
+        }
 
         if (nexts.get(ruleName) == null) {
             nexts.put(ruleName, new HashSet<>());
@@ -154,7 +157,7 @@ public class Grammar {
                         if (terminalDictionary.contains(nextElement)) {
                             currentNext.add(nextElement);
                         } else {
-                            currentNext.addAll(firsts.get(nextElement));
+                            currentNext.addAll(generateFirsts(nextElement));
                         }
                     }
                 });
@@ -165,7 +168,7 @@ public class Grammar {
     public String toString() {
         return String
                 .format(
-                        "\nGrammar declaration.\nTerminal dictionary: %s,\nNon terminal dictionary: %s, \nRules: %s",
+                        "\nGrammar declaration.\nTerminal dictionary: %s,\nNon terminal dictionary: %s,\nRules: %s,\nFirsts: %s,\nNexts: %s",
                         terminalDictionary,
                         nonTerminalDictionary,
                         rules.stream()
@@ -173,7 +176,9 @@ public class Grammar {
                                         "%s=%s",
                                         it.getKey(),
                                         String.join("", it.getValue())
-                                )).collect(Collectors.joining(", "))
+                                )).collect(Collectors.joining(", ")),
+                        firsts,
+                        nexts
                 );
     }
 }

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class GrammarParser {
 
     ////////////////////////////Constants for regexp search//////////////////////////
-    private static final String PARSER_SYMBOL = "`";
+    public static final String PARSER_SYMBOL = "`";
 
     private static final String TERMINAL_DICTIONARY_NAME = "Vt";
     private static final String NON_TERMINAL_DICTIONARY_NAME = "Va";
@@ -68,7 +68,12 @@ public class GrammarParser {
                         List<String> subRules = new ArrayList<>();
 
                         if (ruleDeclaration.contains(SUB_RULE_DIVIDER)) {
+
                             subRules.addAll(Arrays.asList(ruleDeclaration.split("\\" + SUB_RULE_DIVIDER)));
+
+                            if (ruleDeclaration.endsWith("|")) {
+                                subRules.add("");
+                            }
                         } else {
                             subRules.add(ruleDeclaration);
                         }
@@ -90,7 +95,9 @@ public class GrammarParser {
                             if (it.contains(IN_RULE_DIVIDER)) {
                                 inRuleParts.addAll(Arrays.asList(it.split(IN_RULE_DIVIDER)));
                             } else {
-                                inRuleParts.add(it);
+                                if (it.trim().length() != 0) {
+                                    inRuleParts.add(it);
+                                }
                             }
 
                             rules.add(new Pair<>(ruleName, inRuleParts));

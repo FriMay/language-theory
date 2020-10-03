@@ -22,7 +22,22 @@ public class ReplaceFunctionGenerator {
 
         replaceFunctions.addAll(fourGenerationRule(grammar));
 
-        return replaceFunctions;
+        return replaceFunctions.stream().sorted((a, b) -> {
+
+            String left = a.getLeftReadOrder();
+            String right = b.getLeftReadOrder();
+
+            if (left.length() > right.length()) {
+                return -1;
+            }
+
+            if (left.length() < right.length()) {
+                return 1;
+            }
+
+            return left.compareTo(right);
+
+        }).collect(Collectors.toList());
     }
 
     private static List<ReplaceFunction> firstGenerationRule(Grammar grammar) {
@@ -68,7 +83,7 @@ public class ReplaceFunctionGenerator {
 
                     replaceFunctions.addAll(
                             grammar.getFirsts()
-                                    .get(rule.getKey())
+                                    .get(rule.getValue().get(0))
                                     .stream()
                                     .map(leftReadOrder ->
                                             ReplaceFunction.builder()
