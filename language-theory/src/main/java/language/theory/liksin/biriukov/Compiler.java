@@ -4,15 +4,15 @@ import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ReplaceFunctionApplier {
+public class Compiler {
 
     private static final Stack<String> stack = new Stack<>();
 
     private static String currentOrder;
 
-    public static void apply(String startOrder, String startRule, List<ReplaceFunction> replaceFunctionList, Grammar grammar) {
+    public static boolean compile(String startOrder, String startRule, List<ReplaceFunction> replaceFunctionList) {
 
-        currentOrder = startOrder.replaceAll("\\s+", "");
+        currentOrder = startOrder.toLowerCase();
 
         stack.push(startRule);
 
@@ -44,9 +44,13 @@ public class ReplaceFunctionApplier {
 
             if (!isRuleApplied.get()) {
                 System.out.printf("\n\nFor rule %s not found function with consume parameter \"%s\"", stack.peek(), currentOrder.charAt(0));
-                break;
+                return false;
             }
         }
+
+        System.out.println();
+
+        return true;
     }
 
     private static void setCurrentOrder(String order, Integer size) {
