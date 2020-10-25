@@ -1,16 +1,11 @@
-package language.theory.liksin.biriukov;
+package language.theory.interpreter;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static language.theory.liksin.biriukov.ReservedWord.*;
+import static language.theory.interpreter.ReservedWord.*;
 
 public class Interpreter {
 
@@ -18,14 +13,18 @@ public class Interpreter {
 
     private static final Map<String, Integer> variables = new HashMap<>();
 
-    public static void computeEnteredProgram(String enteredProgram) {
+    private static final StringBuilder answer = new StringBuilder();
+
+    public static String computeEnteredProgram(String enteredProgram, String enteredParams) throws IllegalStateException {
 
         initVariables(enteredProgram);
 
-        interpretProgram(enteredProgram);
+        interpretProgram(enteredProgram, enteredParams);
+
+        return answer.toString();
     }
 
-    private static void interpretProgram(String enteredProgram) {
+    private static void interpretProgram(String enteredProgram, String enteredParams) throws IllegalStateException {
 
         String program = getByRegexp(
                 BEGIN.getValue(),
@@ -34,13 +33,13 @@ public class Interpreter {
         );
 
         if (program != null) {
-            startInterpret(program);
+            startInterpret(program, enteredParams);
         } else {
             throw new IllegalStateException("Program init block doesn't found.");
         }
     }
 
-    private static void startInterpret(String currentProgram) {
+    private static void startInterpret(String currentProgram, String currentParams) {
 
         String currentLine = currentProgram.substring(
                 0,
@@ -49,37 +48,53 @@ public class Interpreter {
 
         if (currentProgram.startsWith(WRITE.getValue())) {
 
-            currentProgram = currentProgram.substring(currentLine.length());
+            currentProgram = currentProgram.substring(currentLine.length() + 1);
 
             String variableName = getByRegexp(
                     WRITE.getValue() + OPENING_BRACKET.getValue(),
-                    CLOSING_BRACKET.getValue() + SEMICOLON.getValue(),
+                    CLOSING_BRACKET.getValue(),
                     currentLine
             );
 
-            System.out.println(getVariable(variableName));
+            answer.append(variableName).append("=").append(getVariable(variableName)).append("\n");
         } else if (currentProgram.startsWith(READ.getValue())) {
 
-            currentProgram = currentProgram.substring(currentLine.length());
+            currentProgram = currentProgram.substring(currentLine.length() + 1);
 
             String variableName = getByRegexp(
                     READ.getValue() + OPENING_BRACKET.getValue(),
-                    CLOSING_BRACKET.getValue() + SEMICOLON.getValue(),
+                    CLOSING_BRACKET.getValue(),
                     currentLine
             );
 
             getVariable(variableName);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            int divider = currentParams.indexOf(" ");
 
-            int valueFromConsole;
-            try {
-                valueFromConsole = Integer.parseInt(reader.readLine());
-            } catch (IOException | NumberFormatException e) {
-                throw new IllegalStateException(e);
+            String currentParam;
+
+            if (divider != -1) {
+                currentParam = currentParams.substring(0, divider);
+                currentParams = currentParams.substring(divider + 1);
+            } else {
+                currentParam = currentParams;
+                currentParams = "";
             }
 
-            variables.put(variableName, valueFromConsole);
+            if (currentParam.trim().length() == 0) {
+                throw new IllegalStateException(
+                        String.format("Can't read value for %s variable, cause line with params empty. Add parameter to input line.", variableName)
+                );
+            }
+
+            int value;
+            try {
+                value = Integer.parseInt(currentParam);
+            } catch (NumberFormatException e) {
+                throw new IllegalStateException(String.format("Can't set value for %s variable cause \"%s\" doesn't a number.", variableName, currentParam));
+            }
+
+            variables.put(variableName, value);
         } else if (currentProgram.startsWith(FOR.getValue())) {
 
             currentProgram = currentProgram.substring(FOR.getValue().length() + 1);
@@ -93,10 +108,15 @@ public class Interpreter {
             initVariable(initLine);
 
             currentProgram = currentProgram.substring(currentProgram.indexOf(CLOSING_BRACKET.getValue()) + 1);
+        } else {
+
+            initVariable(currentLine);
+
+            currentProgram = currentProgram.substring(currentLine.length() + 1);
         }
 
         if (currentProgram.length() != 0) {
-            startInterpret(currentProgram);
+            startInterpret(currentProgram, currentParams);
         }
     }
 
@@ -119,7 +139,8 @@ public class Interpreter {
 
         AtomicReference<String> expression = new AtomicReference<>(computedExpression);
 
-        Arrays.stream(expression.get().split("^\\w+"))
+        Arrays.stream(expression.get().split("[^a-z]+"))
+                .filter(it -> it.trim().length() > 0)
                 .forEach(it -> {
 
                     String currentExpressions = expression.get();
@@ -129,9 +150,28 @@ public class Interpreter {
                     }
                 });
 
-        String[] input = expression.get().split("");
+        List<String> inputLines = new ArrayList<>();
 
-        return ExpressionParser.compute(input);
+        StringBuilder number = new StringBuilder();
+
+        for (String s : expression.get().split("")) {
+            try {
+                Integer.parseInt(s);
+                number.append(s);
+            } catch (Exception e) {
+                if (number.length() > 0) {
+                    inputLines.add(number.toString());
+                    number = new StringBuilder();
+                }
+                inputLines.add(s);
+            }
+        }
+
+        if (number.length() != 0) {
+            inputLines.add(number.toString());
+        }
+
+        return ExpressionParser.compute(inputLines.toArray(new String[0]));
     }
 
     private static Integer getVariable(String variableName) {
@@ -167,7 +207,7 @@ public class Interpreter {
                     );
                 }
 
-                ReservedWord reservedWord = ReservedWord.isReserved(notInitVariable);
+                ReservedWord reservedWord = isReserved(notInitVariable);
 
                 if (reservedWord != null) {
                     throw new IllegalStateException(

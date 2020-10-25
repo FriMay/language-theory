@@ -1,4 +1,4 @@
-package language.theory.liksin.biriukov;
+package language.theory.interpreter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,12 +95,12 @@ public class ExpressionParser {
                 stack.push(token);
             } else {
 
-                Double d2 = Double.valueOf(stack.pop());
-                Double d1 = Double.valueOf(stack.pop());
+                Integer i2 = Integer.valueOf(stack.pop());
+                Integer i1 = Integer.valueOf(stack.pop());
 
-                Double result = token.compareTo("+") == 0 ? d1 + d2 :
-                        token.compareTo("-") == 0 ? d1 - d2 :
-                                d1 * d2;
+                Integer result = token.compareTo("+") == 0 ? i1 + i2 :
+                        token.compareTo("-") == 0 ? i1 - i2 :
+                                i1 * i2;
 
                 stack.push(String.valueOf(result));
             }

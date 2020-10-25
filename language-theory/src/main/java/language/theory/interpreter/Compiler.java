@@ -1,4 +1,4 @@
-package language.theory.liksin.biriukov;
+package language.theory.interpreter;
 
 import java.util.List;
 import java.util.Stack;

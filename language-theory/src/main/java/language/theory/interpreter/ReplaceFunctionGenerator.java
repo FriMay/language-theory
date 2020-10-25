@@ -1,4 +1,4 @@
-package language.theory.liksin.biriukov;
+package language.theory.interpreter;
 
 import com.google.common.collect.Lists;
 
