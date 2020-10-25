@@ -19,7 +19,6 @@ public class BaseWebTest {
     public MockMvc before(WebApplicationContext webapp) {
 
         return MockMvcBuilders.webAppContextSetup(webapp)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
                 .alwaysDo(MockMvcResultHandlers.print())
                 .build();
     }

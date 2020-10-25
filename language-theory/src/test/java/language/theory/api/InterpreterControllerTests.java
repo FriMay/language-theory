@@ -43,23 +43,19 @@ public class InterpreterControllerTests extends BaseWebTest {
     }
 
     @Test
-    public void shouldBeOK() throws Exception {
+    public void shouldBeOK() {
 
-        String testProgram = ("var a,b: integer;" +
+        String testProgram = ("var i, j: integer;" +
                 "begin" +
-                "read(a);" +
-                "read(b);" +
-                "write(a);" +
-                "write(b);" +
-                "b = (a + 21)*2;" +
-                "write(b);" +
-                "a = (a + b) * (10+5);" +
-                "write(a);" +
+                "for (i = 2) to 5 do" +
+                "for (i = 5) to 6 do" +
+                "end_for;" +
+                "for (j = 5) to 6 do" +
+                "write(j);" +
+                "end_for;" +
+                "write(i);" +
+                "end_for;" +
                 "end").replaceAll("\\s+", "");
-
-        ResponseEntity entity = controller.interpretProgram(testProgram, "5 7");
-
-        System.out.println(entity.getBody());
 
     }
 }

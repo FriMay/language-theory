@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script>
+        function interpret() {
+
+            let program = $("#program").val().replaceAll("\n", "").replace(/\s/g, "");
+
+            let params = $("#params").val().replaceAll("\n", "");
+
+            $.ajax({
+                type : 'GET',
+                url: "/interpret",
+                data: {
+                    program,
+                    params
+                },
+                success: (data) => {
+                    $("#output").val(data);
+                }
+            });
+
+        }
+    </script>
+</head>
+<body>
+<p>Code area:</p>
+<textarea id="program" rows="12" cols="30">
+var i, a, b: integer;
+begin
+read(a);
+read(b);
+write(a);
+write(b);
+for (i = 1) to 3 do
+    a = i + (10 * b);
+    write(a);
+end_for;
+end
+</textarea>
+<p>Input params:</p>
+<textarea id="params" cols="5">5 6</textarea>
+<br/>
+<button onclick="interpret()">Interpret</button>
+<br/>
+<p>Output</p>
+<textarea id="output" rows="8" cols="60" readonly ></textarea>
+</body>
+</html>

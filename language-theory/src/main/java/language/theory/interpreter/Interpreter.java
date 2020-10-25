@@ -1,5 +1,7 @@
 package language.theory.interpreter;
 
+import org.springframework.util.StringUtils;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
@@ -9,22 +11,35 @@ import static language.theory.interpreter.ReservedWord.*;
 
 public class Interpreter {
 
-    private static final Integer MAX_VARIABLE_SIZE = 14;
+    private final Integer MAX_VARIABLE_SIZE = 14;
 
-    private static final Map<String, Integer> variables = new HashMap<>();
+    private final Map<String, Integer> variables = new HashMap<>();
 
-    private static final StringBuilder answer = new StringBuilder();
+    private final StringBuilder answer = new StringBuilder();
 
-    public static String computeEnteredProgram(String enteredProgram, String enteredParams) throws IllegalStateException {
+    private final AtomicReference<String> params = new AtomicReference<>();
+
+    public String computeEnteredProgram(String enteredProgram, String enteredParams) {
+
+        enteredParams = enteredParams.replaceAll("\\s+", " ");
+
+        params.set(enteredParams);
 
         initVariables(enteredProgram);
 
-        interpretProgram(enteredProgram, enteredParams);
+        interpretProgram(enteredProgram);
 
         return answer.toString();
     }
 
-    private static void interpretProgram(String enteredProgram, String enteredParams) throws IllegalStateException {
+    private void interpretProgram(String enteredProgram) {
+
+        int cntFor = StringUtils.countOccurrencesOf(enteredProgram, FOR.getValue()) / 2;
+        int cntEndFor = StringUtils.countOccurrencesOf(enteredProgram, END_FOR.getValue());
+
+        if (cntFor != cntEndFor) {
+            throw new IllegalStateException("Count operators \"for\" doesn't equals with count operators \"end_for\"!");
+        }
 
         String program = getByRegexp(
                 BEGIN.getValue(),
@@ -33,13 +48,17 @@ public class Interpreter {
         );
 
         if (program != null) {
-            startInterpret(program, enteredParams);
+            startInterpret(program);
         } else {
             throw new IllegalStateException("Program init block doesn't found.");
         }
     }
 
-    private static void startInterpret(String currentProgram, String currentParams) {
+    private void startInterpret(String currentProgram) {
+
+        if (currentProgram.trim().length() == 0) {
+            return;
+        }
 
         String currentLine = currentProgram.substring(
                 0,
@@ -69,16 +88,16 @@ public class Interpreter {
 
             getVariable(variableName);
 
-            int divider = currentParams.indexOf(" ");
+            int divider = params.get().indexOf(" ");
 
             String currentParam;
 
             if (divider != -1) {
-                currentParam = currentParams.substring(0, divider);
-                currentParams = currentParams.substring(divider + 1);
+                currentParam = params.get().substring(0, divider);
+                params.set(params.get().substring(divider + 1));
             } else {
-                currentParam = currentParams;
-                currentParams = "";
+                currentParam = params.get();
+                params.set("");
             }
 
             if (currentParam.trim().length() == 0) {
@@ -97,17 +116,78 @@ public class Interpreter {
             variables.put(variableName, value);
         } else if (currentProgram.startsWith(FOR.getValue())) {
 
-            currentProgram = currentProgram.substring(FOR.getValue().length() + 1);
+            currentProgram = currentProgram.substring(FOR.getValue().length());
 
-            String initLine = getByRegexp(OPENING_BRACKET.getValue(), CLOSING_BRACKET.getValue(), currentProgram);
-
-            if (initLine == null) {
-                throw new IllegalStateException("Init variable in cycle block doesn't found.");
+            if (!currentProgram.startsWith(OPENING_BRACKET.getValue())) {
+                throw new IllegalStateException("Can't find opening bracket in cycle declaration.");
             }
 
-            initVariable(initLine);
+            int index = currentProgram.indexOf(CLOSING_BRACKET.getValue());
 
-            currentProgram = currentProgram.substring(currentProgram.indexOf(CLOSING_BRACKET.getValue()) + 1);
+            if (index == -1) {
+                throw new IllegalStateException("Can't find closing bracket in cycle declaration.");
+            }
+
+            String initLine = currentProgram.substring(1, index);
+
+            String from = initVariable(initLine);
+
+            currentProgram = currentProgram.substring(index + 1);
+
+            if (!currentProgram.startsWith(TO.getValue())) {
+                throw new IllegalStateException("Can't find operator \"to\" in cycle declaration.");
+            }
+
+            currentProgram = currentProgram.substring(TO.getValue().length());
+
+            index = currentProgram.indexOf(DO.getValue());
+
+            if (index == -1) {
+                throw new IllegalStateException("Can't find operator \"do\" in cycle declaration.");
+            }
+
+            Integer to = Integer.parseInt(currentProgram.substring(0, index));
+
+            currentProgram = currentProgram.substring(index + DO.getValue().length());
+
+            index = currentProgram.indexOf(END_FOR.getValue());
+
+            if (index == -1) {
+                throw new IllegalStateException("Can't find operator \"end_for\" in cycle declaration.");
+            }
+
+            int indexFor = getFor(currentProgram, 0);
+
+            if (indexFor != -1) {
+
+                int cntFor = 2;
+
+                while (cntFor != 0) {
+
+                    int newIndex = getFor(currentProgram, indexFor + 1);
+
+                    if (newIndex == -1) {
+                        cntFor--;
+                        index = currentProgram.indexOf(END_FOR.getValue(), indexFor);
+                        indexFor = index + END_FOR.getValue().length();
+                    } else {
+                        cntFor++;
+                        indexFor = newIndex + 1;
+                    }
+                }
+            }
+
+            String subProgram = currentProgram.substring(0, index);
+
+            while (getVariable(from) <= to) {
+
+                startInterpret(subProgram);
+
+                variables.put(from, getVariable(from) + 1);
+            }
+
+            currentProgram = currentProgram.substring(index + END_FOR.getValue().length() + SEMICOLON.getValue().length());
+
         } else {
 
             initVariable(currentLine);
@@ -116,11 +196,23 @@ public class Interpreter {
         }
 
         if (currentProgram.length() != 0) {
-            startInterpret(currentProgram, currentParams);
+            startInterpret(currentProgram);
         }
     }
 
-    private static void initVariable(String initLine) {
+    private Integer getFor(String string, Integer findFromIndex) {
+
+        int indexFor = string.indexOf(FOR.getValue(), findFromIndex);
+        int indexEndFor = string.indexOf(END_FOR.getValue(), findFromIndex);
+
+        if (indexEndFor + (END_FOR.getValue().length() - FOR.getValue().length()) == indexFor) {
+            return -1;
+        }
+
+        return indexFor;
+    }
+
+    private String initVariable(String initLine) {
 
         String[] initArray = initLine.split("=");
 
@@ -133,9 +225,11 @@ public class Interpreter {
         getVariable(variableName);
 
         variables.put(variableName, getResultExpression(initArray[1]));
+
+        return variableName;
     }
 
-    private static Integer getResultExpression(String computedExpression) {
+    private Integer getResultExpression(String computedExpression) {
 
         AtomicReference<String> expression = new AtomicReference<>(computedExpression);
 
@@ -174,7 +268,7 @@ public class Interpreter {
         return ExpressionParser.compute(inputLines.toArray(new String[0]));
     }
 
-    private static Integer getVariable(String variableName) {
+    private Integer getVariable(String variableName) {
 
         if (!variables.containsKey(variableName)) {
             throw new IllegalStateException(String.format("Unknown variable name expected \"%s\".", variableName));
@@ -183,7 +277,7 @@ public class Interpreter {
         return variables.get(variableName);
     }
 
-    private static void initVariables(String enteredProgram) {
+    private void initVariables(String enteredProgram) {
 
         String initBlock = getByRegexp(
                 VAR.getValue(),
@@ -251,7 +345,7 @@ public class Interpreter {
         }
     }
 
-    private static String getByRegexp(String before, String after, String text) {
+    private String getByRegexp(String before, String after, String text) {
 
         Matcher matcher = Pattern
                 .compile(String.format("%s.+%s", before, after))

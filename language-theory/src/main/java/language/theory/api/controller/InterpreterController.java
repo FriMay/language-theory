@@ -1,25 +1,30 @@
 package language.theory.api.controller;
 
 import language.theory.interpreter.Interpreter;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.transaction.Transactional;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Controller
-@Transactional
 public class InterpreterController {
 
-    @GetMapping("/api/interpret")
-    public ResponseEntity<String> interpretProgram(@RequestParam String program, @RequestParam String params) {
+    @GetMapping(value = "/interpret")
+    public void interpretProgram(@RequestParam(required = false) String program, @RequestParam(required = false) String params, HttpServletResponse response) throws IOException {
+
+        response.setStatus(200);
+
+        Interpreter interpreter = new Interpreter();
+
         try {
-            return ResponseEntity.ok(Interpreter.computeEnteredProgram(program, params));
+            response.getWriter().println(interpreter.computeEnteredProgram(program, params));
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(500)
-                    .body(e.getMessage());
+            response.getWriter().println(e.getMessage());
         }
     }
 }

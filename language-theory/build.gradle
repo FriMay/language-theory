@@ -1,8 +1,6 @@
 buildscript {
     ext {
         log4jVersion = '2.13.2'
-        springFrameworkVersion = '5.2.9.RELEASE'
-        springSecurityVersion = '5.3.2.RELEASE'
     }
 }
 
@@ -32,25 +30,12 @@ dependencies {
     implementation group: 'com.google.guava', name: 'guava', version: '29.0-jre'
 
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
-    implementation group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.2.6.RELEASE'
-    implementation group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.1.0.RELEASE'
-    implementation group: 'org.springframework.security', name: 'spring-security-oauth2-resource-server'
-    implementation group: 'org.springframework.security', name: 'spring-security-oauth2-jose'
 
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4jVersion
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4jVersion
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0'
-    implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.8'
-
-    implementation group: 'org.springframework', name: 'spring-websocket', version: springFrameworkVersion
-    implementation group: 'org.springframework', name: 'spring-messaging', version: springFrameworkVersion
-    implementation group: 'org.springframework.security', name: 'spring-security-messaging', version: springSecurityVersion
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation group: 'org.springframework.security', name: 'spring-security-test'
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-    testImplementation group: 'com.h2database', name: 'h2'
 }
