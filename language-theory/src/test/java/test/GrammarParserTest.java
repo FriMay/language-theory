@@ -103,7 +103,7 @@ public class GrammarParserTest {
                 "end").replaceAll("\\s+", "");
 
         if (Compiler.compile(testProgram, "<Программа>", replaceFunctionList)) {
-            Interpreter.interpret(testProgram);
+            Interpreter.computeEnteredProgram(testProgram);
         }
     }
 }

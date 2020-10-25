@@ -1,7 +1,12 @@
 package language.theory.liksin.biriukov;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,77 +18,209 @@ public class Interpreter {
 
     private static final Map<String, Integer> variables = new HashMap<>();
 
-    public static void interpret(String enteredProgram) {
+    public static void computeEnteredProgram(String enteredProgram) {
 
-        if (!initVariables(enteredProgram)) {
-            return;
+        initVariables(enteredProgram);
+
+        interpretProgram(enteredProgram);
+    }
+
+    private static void interpretProgram(String enteredProgram) {
+
+        String program = getByRegexp(
+                BEGIN.getValue(),
+                END.getValue(),
+                enteredProgram
+        );
+
+        if (program != null) {
+            startInterpret(program);
+        } else {
+            throw new IllegalStateException("Program init block doesn't found.");
         }
     }
 
-    private static boolean initVariables(String enteredProgram) {
+    private static void startInterpret(String currentProgram) {
 
-        String beforeVariables = VAR.getValue();
-        String afterVariables =  COLON.getValue() + INTEGER.getValue() +  SEMICOLON.getValue();
+        String currentLine = currentProgram.substring(
+                0,
+                currentProgram.indexOf(SEMICOLON.getValue())
+        );
 
-        Matcher matcher = Pattern
-                .compile(String.format("%s.+%s", beforeVariables, afterVariables))
-                .matcher(enteredProgram);
+        if (currentProgram.startsWith(WRITE.getValue())) {
 
-        if (matcher.find()) {
+            currentProgram = currentProgram.substring(currentLine.length());
 
-            String initBlock = enteredProgram
-                    .substring(matcher.start() + beforeVariables.length(), matcher.end() - afterVariables.length());
+            String variableName = getByRegexp(
+                    WRITE.getValue() + OPENING_BRACKET.getValue(),
+                    CLOSING_BRACKET.getValue() + SEMICOLON.getValue(),
+                    currentLine
+            );
+
+            System.out.println(getVariable(variableName));
+        } else if (currentProgram.startsWith(READ.getValue())) {
+
+            currentProgram = currentProgram.substring(currentLine.length());
+
+            String variableName = getByRegexp(
+                    READ.getValue() + OPENING_BRACKET.getValue(),
+                    CLOSING_BRACKET.getValue() + SEMICOLON.getValue(),
+                    currentLine
+            );
+
+            getVariable(variableName);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+            int valueFromConsole;
+            try {
+                valueFromConsole = Integer.parseInt(reader.readLine());
+            } catch (IOException | NumberFormatException e) {
+                throw new IllegalStateException(e);
+            }
+
+            variables.put(variableName, valueFromConsole);
+        } else if (currentProgram.startsWith(FOR.getValue())) {
+
+            currentProgram = currentProgram.substring(FOR.getValue().length() + 1);
+
+            String initLine = getByRegexp(OPENING_BRACKET.getValue(), CLOSING_BRACKET.getValue(), currentProgram);
+
+            if (initLine == null) {
+                throw new IllegalStateException("Init variable in cycle block doesn't found.");
+            }
+
+            initVariable(initLine);
+
+            currentProgram = currentProgram.substring(currentProgram.indexOf(CLOSING_BRACKET.getValue()) + 1);
+        }
+
+        if (currentProgram.length() != 0) {
+            startInterpret(currentProgram);
+        }
+    }
+
+    private static void initVariable(String initLine) {
+
+        String[] initArray = initLine.split("=");
+
+        if (initArray.length != 2) {
+            throw new IllegalStateException("Init block should contain one equal symbol!");
+        }
+
+        String variableName = initArray[0];
+
+        getVariable(variableName);
+
+        variables.put(variableName, getResultExpression(initArray[1]));
+    }
+
+    private static Integer getResultExpression(String computedExpression) {
+
+        AtomicReference<String> expression = new AtomicReference<>(computedExpression);
+
+        Arrays.stream(expression.get().split("^\\w+"))
+                .forEach(it -> {
+
+                    String currentExpressions = expression.get();
+
+                    if (currentExpressions.contains(it)) {
+                        expression.set(currentExpressions.replaceAll(it, getVariable(it).toString()));
+                    }
+                });
+
+        String[] input = expression.get().split("");
+
+        return ExpressionParser.compute(input);
+    }
+
+    private static Integer getVariable(String variableName) {
+
+        if (!variables.containsKey(variableName)) {
+            throw new IllegalStateException(String.format("Unknown variable name expected \"%s\".", variableName));
+        }
+
+        return variables.get(variableName);
+    }
+
+    private static void initVariables(String enteredProgram) {
+
+        String initBlock = getByRegexp(
+                VAR.getValue(),
+                COLON.getValue() + INTEGER.getValue() + SEMICOLON.getValue(),
+                enteredProgram
+        );
+
+        if (initBlock != null) {
 
             String[] notInitVariables = initBlock.split(COMMA.getValue());
 
             for (String notInitVariable : notInitVariables) {
 
                 if (notInitVariable.length() > MAX_VARIABLE_SIZE) {
-                    System.out.printf(
-                            "Variable \"%s\" length should be less equal than %s.\n",
-                            notInitVariable,
-                            MAX_VARIABLE_SIZE
+                    throw new IllegalStateException(
+                            String.format(
+                                    "Variable \"%s\" length should be less equal than %s.\n",
+                                    notInitVariable,
+                                    MAX_VARIABLE_SIZE
+                            )
                     );
-                    return false;
                 }
 
                 ReservedWord reservedWord = ReservedWord.isReserved(notInitVariable);
 
                 if (reservedWord != null) {
-                    System.out.printf(
-                            "Variable \"%s\" can't contain reserved word \"%s\".\n",
-                            notInitVariable,
-                            reservedWord.getValue()
+                    throw new IllegalStateException(
+                            String.format(
+                                    "Variable \"%s\" can't contain reserved word \"%s\".\n",
+                                    notInitVariable,
+                                    reservedWord.getValue()
+                            )
                     );
-                    return false;
                 }
 
                 Matcher badCharacterMatcher = Pattern.compile("[^a-z0-9]+").matcher(notInitVariable);
 
                 if (badCharacterMatcher.find()) {
-                    System.out.printf(
-                            "Variable name should only consist number [0-9] and lowercase letters of the Latin alphabet [a-z].\nBad characters in \"%s\" record.\n",
-                            notInitVariable
+                    throw new IllegalStateException(
+                            String.format(
+                                    "Variable name should only consist number [0-9] and" +
+                                            " lowercase letters of the Latin alphabet [a-z]." +
+                                            "\nBad characters in \"%s\" record.\n",
+                                    notInitVariable
+                            )
                     );
-                    return false;
                 }
 
                 for (String declaredVariable : variables.keySet()) {
                     if (declaredVariable.equals(notInitVariable)) {
-                        System.out.printf("Variable with \"%s\" name already declared.\n", notInitVariable);
-                        return false;
+                        throw new IllegalStateException(
+                                String.format(
+                                        "Variable with \"%s\" name already declared.\n",
+                                        notInitVariable
+                                )
+                        );
                     }
                 }
 
-                variables.put(notInitVariable, null);
+                variables.put(notInitVariable, 0);
             }
 
-
         } else {
-            System.out.println("Initialize block doesn't reached in current program.");
-            return false;
+            throw new IllegalStateException("Initialize block doesn't reached in current program.");
         }
+    }
 
-        return true;
+    private static String getByRegexp(String before, String after, String text) {
+
+        Matcher matcher = Pattern
+                .compile(String.format("%s.+%s", before, after))
+                .matcher(text);
+
+        if (matcher.find()) {
+            return text.substring(matcher.start() + before.length(), matcher.end() - after.length());
+        } else {
+            return null;
+        }
     }
 }
