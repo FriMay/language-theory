@@ -355,7 +355,7 @@ public class Interpreter {
             throw new IllegalStateException("Initialize block doesn't reached in current program.");
         }
 
-        return enteredProgram.substring(VAR.getValue().length() +initBlock.length() + COLON.getValue().length() + INTEGER.getValue().length() + SEMICOLON.getValue().length());
+        return enteredProgram.substring(VAR.getValue().length() + initBlock.length() + COLON.getValue().length() + INTEGER.getValue().length() + SEMICOLON.getValue().length());
     }
 
     private String getByRegexp(String before, String after, String text) {

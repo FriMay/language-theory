@@ -26,7 +26,8 @@ public class InterpreterControllerTests extends BaseWebTest {
 
     private static boolean isDataSetup = false;
 
-    private void initData() { }
+    private void initData() {
+    }
 
     @Before
     public void before() {
