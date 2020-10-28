@@ -11,8 +11,6 @@ import static language.theory.interpreter.ReservedWord.*;
 
 public class Interpreter {
 
-    private final Integer MAX_VARIABLE_SIZE = 14;
-
     private final Map<String, Integer> variables = new HashMap<>();
 
     private final StringBuilder answer = new StringBuilder();
@@ -25,7 +23,7 @@ public class Interpreter {
 
         params.set(enteredParams);
 
-        initVariables(enteredProgram);
+        enteredProgram = initVariables(enteredProgram);
 
         interpretProgram(enteredProgram);
 
@@ -34,24 +32,36 @@ public class Interpreter {
 
     private void interpretProgram(String enteredProgram) {
 
-        int cntFor = StringUtils.countOccurrencesOf(enteredProgram, FOR.getValue()) / 2;
         int cntEndFor = StringUtils.countOccurrencesOf(enteredProgram, END_FOR.getValue());
+        int cntFor = StringUtils.countOccurrencesOf(enteredProgram, FOR.getValue()) - cntEndFor;
 
         if (cntFor != cntEndFor) {
             throw new IllegalStateException("Count operators \"for\" doesn't equals with count operators \"end_for\"!");
         }
 
-        String program = getByRegexp(
+        if (!enteredProgram.startsWith(BEGIN.getValue())) {
+            throw new IllegalStateException(
+                    String.format(
+                            "Can't find operator \"%s\" in init block.",
+                            BEGIN.getValue()
+                    )
+            );
+        }
+
+        if (!enteredProgram.endsWith(END.getValue())) {
+            throw new IllegalStateException(
+                    String.format(
+                            "Can't find operator \"%s\" in init block.",
+                            END.getValue()
+                    )
+            );
+        }
+
+        startInterpret(getByRegexp(
                 BEGIN.getValue(),
                 END.getValue(),
                 enteredProgram
-        );
-
-        if (program != null) {
-            startInterpret(program);
-        } else {
-            throw new IllegalStateException("Program init block doesn't found.");
-        }
+        ));
     }
 
     private void startInterpret(String currentProgram) {
@@ -277,7 +287,7 @@ public class Interpreter {
         return variables.get(variableName);
     }
 
-    private void initVariables(String enteredProgram) {
+    private String initVariables(String enteredProgram) {
 
         String initBlock = getByRegexp(
                 VAR.getValue(),
@@ -291,6 +301,7 @@ public class Interpreter {
 
             for (String notInitVariable : notInitVariables) {
 
+                Integer MAX_VARIABLE_SIZE = 14;
                 if (notInitVariable.length() > MAX_VARIABLE_SIZE) {
                     throw new IllegalStateException(
                             String.format(
@@ -343,6 +354,8 @@ public class Interpreter {
         } else {
             throw new IllegalStateException("Initialize block doesn't reached in current program.");
         }
+
+        return enteredProgram.substring(VAR.getValue().length() +initBlock.length() + COLON.getValue().length() + INTEGER.getValue().length() + SEMICOLON.getValue().length());
     }
 
     private String getByRegexp(String before, String after, String text) {

@@ -11,14 +11,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @WebMvcTest(InterpreterController.class)
 public class InterpreterControllerTests extends BaseWebTest {
 
     @Autowired
     private WebApplicationContext webapp;
-
-    @Autowired
-    private InterpreterController controller;
 
     private final Logger logger = LogManager.getLogger();
 
@@ -42,7 +42,7 @@ public class InterpreterControllerTests extends BaseWebTest {
     }
 
     @Test
-    public void shouldBeOK() {
+    public void shouldBeOK() throws Exception {
 
         String testProgram = ("var i, j: integer;" +
                 "begin" +
@@ -56,5 +56,10 @@ public class InterpreterControllerTests extends BaseWebTest {
                 "end_for;" +
                 "end").replaceAll("\\s+", "");
 
+        mvc.perform(
+                get("/interpret")
+                        .param("program", testProgram)
+                        .param("params", "1 2"))
+                .andExpect(status().isOk());
     }
 }

@@ -12,7 +12,10 @@ import java.io.IOException;
 public class InterpreterController {
 
     @GetMapping(value = "/interpret")
-    public void interpretProgram(@RequestParam(required = false) String program, @RequestParam(required = false) String params, HttpServletResponse response) throws IOException {
+    public void interpretProgram(
+            @RequestParam(required = false) String program,
+            @RequestParam(required = false) String params,
+            HttpServletResponse response) throws IOException {
 
         response.setStatus(200);
 
